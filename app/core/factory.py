@@ -1,9 +1,10 @@
+from core import IPaymentPocessor, get_payment_method
 from schemas import PaymentMethods
-from core import IPaymentPocessor, get_payment_method, INotificationChannel
-from core.strategy import NOTIFICATIONS_QUEUE
 
-from collections import deque
-from typing import Type, Tuple
+from typing import Type
+import logging
+
+logger = logging.getLogger(__name__)
 
 class PaymentMethodFactory:
     """
@@ -38,31 +39,12 @@ class PaymentMethodFactory:
             processor_class = self.payment_methods.get(payment_type)
             
             if not processor_class:
+                logger.warning(
+                    f"The payment method '{payment_type}' is soport for the sistem, "
+                    "but a processor has not been implementation in the factory"
+                )
                 raise  RuntimeError(
                     f"The payment method '{payment_type}' is soport for the sistem, "
                     "but a processor has not been implementation in the factory"
                 )
             return processor_class()
-
-# class NotificationChannelFactory:
-#     """
-#     This class is a factory notifications channel.
-    
-#     Any class that implement this factory must define the
-#     method 'create_notification_channel'.
-    
-#     Methods:
-#         create_notification_channel(notifiers: Tuple[Type[INotificationChannel], int])
-#     """
-#     def __init__(self):
-#         self.notifiers_queue: deque[Tuple[Type[INotificationChannel], int]] = deque()
-        
-#     def create_notification_channel(
-#         self,
-#         notifiers: Tuple[Type[INotificationChannel], int]
-#         ) -> deque[Tuple[Type[INotificationChannel], int]]:
-#         """
-#         Create a queue with the avaible notifiers.
-#         """
-#         [self.notifiers_queue.append(notifier) for notifier in notifiers]
-#         return self.notifiers_queue

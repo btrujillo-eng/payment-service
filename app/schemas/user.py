@@ -20,7 +20,7 @@ class UserModel(BaseModel):
         pattern=r'^[a-zA-ZáéíóúÁÉÍÓÚñÑ]+$',
         description="User's first name"
         )
-    middle_name : str = Field(
+    middle_name : str | None = Field(
         min_length=3,
         max_length=15,
         pattern=r'^[a-zA-ZáéíóúÁÉÍÓÚñÑ]+$',
@@ -32,7 +32,7 @@ class UserModel(BaseModel):
         pattern=r'^[a-zA-ZáéíóúÁÉÍÓÚñÑ]+$',
         description="User's first surname"
     )
-    middle_surname : str = Field(
+    middle_surname : str | None = Field(
         min_length=3,
         max_length=17,
         pattern=r'^[a-zA-ZáéíóúÁÉÍÓÚñÑ]+$',

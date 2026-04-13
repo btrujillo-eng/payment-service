@@ -1,10 +1,8 @@
 from services.discounts import NoDiscount, ChristmasDiscount, FixedDiscount, BlackFridayDiscount
-from services.notifiers import EmailChannel, WhatsappChannel, SmsChannel
 from schemas import DiscountStrategy
-from core import IDiscountStrategy, INotificationChannel
+from core import IDiscountStrategy
 
-from typing import Dict, List, Any, Type, Tuple
-from collections import deque
+from typing import Dict, List, Any
 
 STRATEGY_MAP: Dict[DiscountStrategy, IDiscountStrategy] = {
         DiscountStrategy.NODISCOUNT: NoDiscount(),
@@ -19,9 +17,3 @@ PROCESSING_NETWORK_RULES: List[Dict[str, Any]] = [
     {"name": "Mastercard", "prefixes": ("51", "52", "53", "54", "55",), "ranges": [(2221, 2720)], "lengths": [16]},
     {"name": "Discover", "prefixes": (6011,), "ranges": [(644, 650)], "lengths": [16]}
 ]
-
-NOTIFICATIONS_QUEUE: deque[Tuple[Type[INotificationChannel], int]] = deque([
-    (EmailChannel, 0),
-    (WhatsappChannel, 0),
-    (SmsChannel, 0)
-])

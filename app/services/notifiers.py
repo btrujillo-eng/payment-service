@@ -1,6 +1,10 @@
 from core import INotificationChannel
 from schemas import PurchaseDetailsModel
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 class WhatsappChannel(INotificationChannel):
     async def notify(self, purchase_details: PurchaseDetailsModel):
         """
@@ -8,13 +12,14 @@ class WhatsappChannel(INotificationChannel):
         """
         # Simulating sending a message via WhatsApp.
         if purchase_details.user_data.contac_info.phone_number:
-            print(
+            logger.info(
                 f"""
                 ¡Hola{purchase_details.user_data.first_name}!\n\n
                 Datos de tu compra:\n
                 -----------------\n
                 Valor total: {purchase_details.amount_purchase}\n
-                Método de pago: {purchase_details.payment_method}\n\n
+                Método de pago: {purchase_details.payment_method}\n
+                Id de la transacción: {purchase_details.transaction_id}\n\n
                 Gracias por tu compra.
                 """
             )
@@ -26,16 +31,17 @@ class SmsChannel(INotificationChannel):
         """
         if purchase_details.user_data.contac_info.phone_number:
             # Simulating sending a message via SMS.
-            print(
+            logger.info(
                 f"""
                 ¡Hola{purchase_details.user_data.first_name}!\n\n
                 Datos de tu compra:\n
                 -----------------\n
                 Valor total: {purchase_details.amount_purchase}\n
-                Método de pago: {purchase_details.payment_method}\n\n
+                Método de pago: {purchase_details.payment_method}\n
+                Id de la transacción: {purchase_details.transaction_id}\n\n
                 Gracias por tu compra.
                 """
-            )          
+            )
     
 class EmailChannel(INotificationChannel):
     async def notify(self, purchase_details: PurchaseDetailsModel):
@@ -50,6 +56,7 @@ class EmailChannel(INotificationChannel):
             -------------------------
             Valor total: ${purchase_details.amount_purchase}
             Método de pago: {purchase_details.payment_method}
+            Id de la transacción: {purchase_details.transaction_id}
 
             Gracias por tu compra.
             """

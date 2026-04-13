@@ -3,6 +3,9 @@ from core import IDiscountStrategy
 from .strategy import PROCESSING_NETWORK_RULES
 
 from typing import Dict
+import logging
+
+logger = logging.getLogger(__name__)
 
 def get_payment_method(type_payment_method: PaymentMethods | str) -> PaymentMethods:
     """
@@ -15,14 +18,15 @@ def get_payment_method(type_payment_method: PaymentMethods | str) -> PaymentMeth
             enum_method = PaymentMethods(type_payment_method.strip().lower())
             return enum_method
         except ValueError:
+            logger.error(f"The payment method of type {type_payment_method} not found")
             raise ValueError(f"The payment method of type {type_payment_method} not found")
     else:
         return type_payment_method
    
 def get_discount_strategy(
-    discount_type: DiscountStrategy | str,
-    strategy_map: Dict[DiscountStrategy, IDiscountStrategy],
-    default: IDiscountStrategy | None = None
+        discount_type: DiscountStrategy | str,
+        strategy_map: Dict[DiscountStrategy, IDiscountStrategy],
+        default: IDiscountStrategy | None = None
     ) -> IDiscountStrategy:
     """
     It searches a strategic discount and returns it dependig on the discount type.
@@ -38,6 +42,7 @@ def get_discount_strategy(
     default_class = default
     strategy_class = strategy_map.get(discount_type, default_class)
     if not strategy_class:
+        logger.critical("No default strategy was found on the map")
         raise RuntimeError("Critical error: No default strategy was found on the map")
     
     return strategy_class
@@ -48,11 +53,12 @@ def get_processing_network(card_number: int) -> str | None:
     """
     s_card = str(card_number)
     iin_code = int(s_card[:4])
-    for rule in PROCESSING_NETWORK_RULES:
-        if s_card.startswith(rule['prefixes']):
-            return rule['name']
+    for network in PROCESSING_NETWORK_RULES:
+        if s_card.startswith(network['prefixes']):
+            return network['name']
 
-        for start, end in rule['ranges']:
+        for start, end in network['ranges']:
             if start <= iin_code <= end:
-                return rule['name']
+                return network['name']
+            
     return None

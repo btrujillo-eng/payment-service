@@ -35,12 +35,12 @@
 
 # def enqueue(elemtents) -> None:
 #     [queue.append(el) for el in elemtents]
-from core import dequeue, NOTIFICATIONS_QUEUE
-from schemas import PurchaseDetailsModel, UserModel, ContactInfoModel
+# from core import dequeue
+# from schemas import PurchaseDetailsModel, UserModel, ContactInfoModel
 
-contact_info = ContactInfoModel(email="juan@example.com", phone_number="3238647590")
-user = UserModel(first_name="juan", middle_name="stiven", first_surname="cabrales", middle_surname="jonuazo", contac_info=contact_info)
+# contact_info = ContactInfoModel(email="juan@example.com", phone_number="3238647590")
+# user = UserModel(first_name="juan", middle_name="stiven", first_surname="cabrales", middle_surname="jonuazo", contac_info=contact_info)
 
-purchase_details = PurchaseDetailsModel(user_data=user, amount_purchase=50000, payment_method='tarjeta')
-print(dequeue(NOTIFICATIONS_QUEUE, purchase_details))
+# purchase_details = PurchaseDetailsModel(user_data=user, amount_purchase=5000, payment_method='tarjeta', transaction_id=4) # type: ignore
+# print(dequeue(NOTIFICATIONS_QUEUE, purchase_details))
 

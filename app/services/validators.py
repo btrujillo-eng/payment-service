@@ -18,16 +18,14 @@ class CardValidator(ICardValidator):
         """
         processing_network = get_processing_network(card_number)
         if not processing_network:
-            print("Processing network unkwon")
             return False
         
         length_valid = validate_card_length(processing_network, card_number)
         if not length_valid:
-            print("Invalid card length")
             return False
         
         card_valid = luhn_algorit(card_number)
         if not card_valid:
-            print("Mathematically invalid")
             return False
+        
         return True
