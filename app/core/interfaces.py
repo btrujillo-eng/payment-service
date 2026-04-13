@@ -69,7 +69,7 @@ class IShoppingCart(ABC):
         amount_purchased: AmountPurchasedModel,
         discount_type: DiscountStrategy | str
     ) -> AmountPurchasedModel: ...
-    
+
 class IPaymentPocessor(ABC):
     """
     Interface for payment processor.

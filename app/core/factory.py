@@ -20,9 +20,9 @@ class PaymentMethodFactory:
     """
     def __init__(
             self,
-            card_method: IPaymentPocessor,
-            paypal_method: IPaymentPocessor,
-            cripto_method: IPaymentPocessor
+            card_method: Type[IPaymentPocessor],
+            paypal_method: Type[IPaymentPocessor],
+            cripto_method: Type[IPaymentPocessor]
             ):
         self.payment_methods = {
             PaymentMethods.CARD: card_method,
@@ -44,25 +44,25 @@ class PaymentMethodFactory:
                 )
             return processor_class()
 
-class NotificationChannelFactory:
-    """
-    This class is a factory notifications channel.
+# class NotificationChannelFactory:
+#     """
+#     This class is a factory notifications channel.
     
-    Any class that implement this factory must define the
-    method 'create_notification_channel'.
+#     Any class that implement this factory must define the
+#     method 'create_notification_channel'.
     
-    Methods:
-        create_notification_channel(notifiers: Tuple[Type[INotificationChannel], int])
-    """
-    def __init__(self):
-        self.notifiers_queue: deque[Tuple[Type[INotificationChannel], int]] = deque()
+#     Methods:
+#         create_notification_channel(notifiers: Tuple[Type[INotificationChannel], int])
+#     """
+#     def __init__(self):
+#         self.notifiers_queue: deque[Tuple[Type[INotificationChannel], int]] = deque()
         
-    def create_notification_channel(
-        self,
-        notifiers: Tuple[Type[INotificationChannel], int]
-        ) -> deque[Tuple[Type[INotificationChannel], int]]:
-        """
-        Create a queue with the avaible notifiers.
-        """
-        [self.notifiers_queue.append(notifier) for notifier in notifiers]
-        return self.notifiers_queue
+#     def create_notification_channel(
+#         self,
+#         notifiers: Tuple[Type[INotificationChannel], int]
+#         ) -> deque[Tuple[Type[INotificationChannel], int]]:
+#         """
+#         Create a queue with the avaible notifiers.
+#         """
+#         [self.notifiers_queue.append(notifier) for notifier in notifiers]
+#         return self.notifiers_queue

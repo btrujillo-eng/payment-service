@@ -7,10 +7,10 @@ from typing import Dict, List, Any, Type, Tuple
 from collections import deque
 
 STRATEGY_MAP: Dict[DiscountStrategy, IDiscountStrategy] = {
-        DiscountStrategy.NODISCOUNT: NoDiscount,
-        DiscountStrategy.CHRISTMAS: ChristmasDiscount,
-        DiscountStrategy.FIXED: FixedDiscount,
-        DiscountStrategy.BLACKFRIDAY: BlackFridayDiscount
+        DiscountStrategy.NODISCOUNT: NoDiscount(),
+        DiscountStrategy.CHRISTMAS: ChristmasDiscount(),
+        DiscountStrategy.FIXED: FixedDiscount(),
+        DiscountStrategy.BLACKFRIDAY: BlackFridayDiscount()
     }
 
 PROCESSING_NETWORK_RULES: List[Dict[str, Any]] = [
@@ -20,8 +20,8 @@ PROCESSING_NETWORK_RULES: List[Dict[str, Any]] = [
     {"name": "Discover", "prefixes": (6011,), "ranges": [(644, 650)], "lengths": [16]}
 ]
 
-NOTIFICATIONS_QUEUE: Tuple[Type[INotificationChannel], int] = (
+NOTIFICATIONS_QUEUE: deque[Tuple[Type[INotificationChannel], int]] = deque([
     (EmailChannel, 0),
     (WhatsappChannel, 0),
     (SmsChannel, 0)
-)
+])

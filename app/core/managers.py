@@ -2,8 +2,7 @@ from schemas import PaymentMethods, DiscountStrategy
 from core import IDiscountStrategy
 from .strategy import PROCESSING_NETWORK_RULES
 
-from enum import Enum
-from typing import Dict, Type
+from typing import Dict
 
 def get_payment_method(type_payment_method: PaymentMethods | str) -> PaymentMethods:
     """
@@ -22,8 +21,8 @@ def get_payment_method(type_payment_method: PaymentMethods | str) -> PaymentMeth
    
 def get_discount_strategy(
     discount_type: DiscountStrategy | str,
-    strategy_map: Dict[Enum, Type[IDiscountStrategy]],
-    default: Type[IDiscountStrategy] | None = None
+    strategy_map: Dict[DiscountStrategy, IDiscountStrategy],
+    default: IDiscountStrategy | None = None
     ) -> IDiscountStrategy:
     """
     It searches a strategic discount and returns it dependig on the discount type.
@@ -41,7 +40,7 @@ def get_discount_strategy(
     if not strategy_class:
         raise RuntimeError("Critical error: No default strategy was found on the map")
     
-    return strategy_class()
+    return strategy_class
 
 def get_processing_network(card_number: int) -> str | None:
     """

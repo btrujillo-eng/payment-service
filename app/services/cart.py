@@ -10,7 +10,7 @@ class ShoppingCart(IShoppingCart):
         Apply a discount type to the purchase and calculate
         the total price.
         """
-        discount_strategy = get_discount_strategy(discount_type, STRATEGY_MAP, default=NoDiscount)
+        discount_strategy = get_discount_strategy(discount_type, STRATEGY_MAP, default=NoDiscount())
         discount_value = discount_strategy.apply_discount(amount_purchased=amount_purchased)
         total_price = amount_purchased.amount - discount_value.amount
         

@@ -2,6 +2,7 @@ from enum import Enum
 from pydantic import BaseModel, Field
 from decimal import Decimal
 from typing import Literal
+from uuid import UUID
 
 from .user import UserModel
 
@@ -36,6 +37,7 @@ class PurchaseDetailsModel(BaseModel):
         description="Total purchase amount"
         )
     payment_method : str
+    transaction_id : UUID
 
 # To configure the purchase status soon.
 PurchaseStatus = Literal['succeded', 'rejected']

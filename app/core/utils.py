@@ -1,7 +1,9 @@
 from .strategy import PROCESSING_NETWORK_RULES
+from .interfaces import INotificationChannel
 from schemas import PurchaseDetailsModel
 
 from collections import deque
+from typing import List, Type
 
 def luhn_algorit(card_number: int) -> bool:
     """
@@ -27,6 +29,7 @@ def luhn_algorit(card_number: int) -> bool:
         
     if total_sum % 10 == 0:
         return True
+    
     return False
 
 def validate_card_length(processing_network: str, card_number: int) -> bool:
@@ -37,25 +40,25 @@ def validate_card_length(processing_network: str, card_number: int) -> bool:
     for rule in PROCESSING_NETWORK_RULES:
         if rule['name'] == processing_network:
             return len(str(card_number)) in rule['lengths']
+    
+    return False
         
-def dequeue(notifiers_queue: deque, purchase_details: PurchaseDetailsModel):
+async def dequeue(
+        notifiers_queue: deque, 
+        purchase_details: PurchaseDetailsModel
+        ) -> List[Type[INotificationChannel] | None]:
+        # A list is compiled of the channels where the notifiers failed
+        notifiers_failed = []
         while notifiers_queue:
             notifier, attempts = notifiers_queue.popleft()
-            if not notifier.notify(purchase_details):
-                print(f"Notificación exitosa con {notifier}")
+            if await notifier.notify(purchase_details):
+                print(f"Notification success with {notifier}")
             else:
-                new_attemps = attempts + 1
-                print(f"Fallo. Reintentando {new_attemps}")
-                
-                if attempts + 1 < 3:
-                    notifiers_queue.append((notifier, attempts + 1))
+                new_attempts = attempts + 1
+                if new_attempts < 3:
+                    notifiers_queue.append((notifier, new_attempts))
                 else:
-                    # Simulating writing to technical support.
-                    print("Sending channels notiifers failed to tecnhical support")
-                    notifiers_failed = []
                     notifiers_failed.append(notifier)
-                    continue
-        return notifiers_failed
         
-#print(luhn_algorit(4532015112830366))
+        return notifiers_failed
     

@@ -2,7 +2,7 @@ from core import INotificationChannel
 from schemas import PurchaseDetailsModel
 
 class WhatsappChannel(INotificationChannel):
-    async def notify(self, purchase_details: PurchaseDetailsModel) -> bool:
+    async def notify(self, purchase_details: PurchaseDetailsModel):
         """
         Sends a notifications to the user via WhatsApp.
         """
@@ -18,11 +18,9 @@ class WhatsappChannel(INotificationChannel):
                 Gracias por tu compra.
                 """
             )
-            return True
-        return False
     
 class SmsChannel(INotificationChannel):
-    async def notify(self, purchase_details: PurchaseDetailsModel) -> bool:
+    async def notify(self, purchase_details: PurchaseDetailsModel):
         """
         Sends a notifications to user via SMS.
         """
@@ -37,12 +35,10 @@ class SmsChannel(INotificationChannel):
                 Método de pago: {purchase_details.payment_method}\n\n
                 Gracias por tu compra.
                 """
-            )
-            return True
-        return False   
+            )          
     
 class EmailChannel(INotificationChannel):
-    async def notify(self, purchase_details: PurchaseDetailsModel) -> bool:
+    async def notify(self, purchase_details: PurchaseDetailsModel):
         """
         Sends a notifications to the user via email.
         """
@@ -64,7 +60,3 @@ class EmailChannel(INotificationChannel):
             mensaje_email['Subject'] = "Confirmación de tu compra"
             mensaje_email['From'] = "tienda@d1.com"
             mensaje_email['To'] = purchase_details.user_data.contac_info.email
-            return True
-        return False
-    
-    
