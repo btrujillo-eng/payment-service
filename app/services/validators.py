@@ -3,14 +3,14 @@ from core import ICardValidator, get_processing_network, validate_card_length, l
 class CardValidator(ICardValidator):
     def validate(self, card_number: int) -> bool:
         """
-        Valid if a card is valid based on your number.
+        Valid if a card is valid based on his number.
         
         For the validation of the card this method is based
         on three steps.
         
-        1. Search for a processing network based on your IIN Prefixe.
+        1. Search for a processing network based on his IIN Prefixe.
         
-        2. Valid if the card number length is valid, depending on your processing network.
+        2. Valid if the card number length is valid, depending on his processing network.
         
         3. Used the luhn algorit for calculate if the card number is mathematically correct.
         

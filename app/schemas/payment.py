@@ -43,3 +43,4 @@ class PaymentData(BaseModel):
     transaction_id : UUID | None = Field(description="Trasaction id")
     installments : int | None = Field(description="Number of installments in which the purchase will be paid")
     payment_status : PaymentStatus = Field(description="Payment status. The status could be 'succeded' or 'rejected'")
+    last_digits_card : int = Field(description="Last four digits of the card used for payment")

@@ -9,12 +9,20 @@ class INotificationChannel(ABC):
     method 'notify'.
     
     Methods:
-        notify(purchase_details: PurchaseDetails) -> bool
+        notify_successful_payment(payment_data: PaymentData)
         
-            Sends a notifications to the user.
+            Sends a notifications to the user when the payment has been successfully
+            completed.
+              
+        notify_rejected_payment(payment_data: PaymentData)
+
+            Sends a notifications to the user when the payment has been rejected.
     """
     @abstractmethod
-    async def notify(self, purchase_details: PaymentData) -> bool: ...
+    async def notify_successful_payment(self, payment_data: PaymentData): ...
+    
+    @abstractmethod
+    async def notify_rejected_payment(self, payment_data: PaymentData):...
 
 class ICardValidator(ABC):
     """
