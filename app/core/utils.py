@@ -1,9 +1,13 @@
 from .strategy import PROCESSING_NETWORK_RULES
 from .interfaces import INotificationChannel
+from .managers import get_notification_method
 from schemas import PaymentData
 
 from collections import deque
 from typing import List, Type
+import logging
+
+logger = logging.getLogger(__name__)
 
 def luhn_algorit(card_number: int) -> bool:
     """
@@ -45,14 +49,19 @@ def validate_card_length(processing_network: str, card_number: int) -> bool:
         
 async def dequeue(
         notifiers_queue: deque, 
-        purchase_details: PaymentData
+        payment_data: PaymentData
         ) -> List[Type[INotificationChannel] | None]:
         # A list is compiled of the channels where the notifiers failed
         notifiers_failed = []
         while notifiers_queue:
             notifier, attempts = notifiers_queue.popleft()
-            if await notifier.notify(purchase_details):
-                print(f"Notification success with {notifier}")
+            notification_method = get_notification_method(payment_data, notifier)
+            if not notification_method:
+                logger.critical("No notification method was found for the notification channels")
+                raise RuntimeError("No notification method was found for the notification channels")
+            
+            if await notifier.notification_method(payment_data):
+                logger.info(f"Notification success with {notifier}")
             else:
                 new_attempts = attempts + 1
                 if new_attempts < 3:

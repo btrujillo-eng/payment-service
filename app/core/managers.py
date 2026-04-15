@@ -1,8 +1,8 @@
-from schemas import PaymentMethods, DiscountStrategy
-from core import IDiscountStrategy
-from .strategy import PROCESSING_NETWORK_RULES
+from schemas import PaymentMethods, DiscountStrategy, PaymentData, PaymentStatus
+from core import IDiscountStrategy, INotificationChannel
+from .strategy import PROCESSING_NETWORK_RULES, NOTIFICATION_METHOD
 
-from typing import Dict
+from typing import Dict, cast
 import logging
 
 logger = logging.getLogger(__name__)
@@ -62,3 +62,13 @@ def get_processing_network(card_number: int) -> str | None:
                 return network['name']
             
     return None
+
+def get_notification_method(payment_data: PaymentData, channel_instance: INotificationChannel):
+    status = cast(PaymentStatus, payment_data.payment_status)
+    method_name = NOTIFICATION_METHOD.get(status)
+    if not method_name:
+        method_name = "notify_rejected_payment"
+    
+    # getattr getattrs is used to dynamically search for a method in its object or instance using its name in str.
+    method = getattr(channel_instance, method_name, None)
+    return method

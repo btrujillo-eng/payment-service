@@ -1,5 +1,5 @@
 from services.discounts import NoDiscount, ChristmasDiscount, FixedDiscount, BlackFridayDiscount
-from schemas import DiscountStrategy
+from schemas import DiscountStrategy, PaymentStatus
 from core import IDiscountStrategy
 
 from typing import Dict, List, Any
@@ -17,3 +17,8 @@ PROCESSING_NETWORK_RULES: List[Dict[str, Any]] = [
     {"name": "Mastercard", "prefixes": ("51", "52", "53", "54", "55",), "ranges": [(2221, 2720)], "lengths": [16]},
     {"name": "Discover", "prefixes": (6011,), "ranges": [(644, 650)], "lengths": [16]}
 ]
+
+NOTIFICATION_METHOD: Dict[PaymentStatus, str] = {
+    "rejected": "notify_rejected_payment",
+    "succeded": "notify_successful_payment"
+}
