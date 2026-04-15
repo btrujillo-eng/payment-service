@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from schemas import DiscountStrategy, AmountPurchasedModel, PurchaseDetailsModel
+from schemas import DiscountStrategy, AmountPurchasedModel, PaymentData
 
 class INotificationChannel(ABC):
     """
@@ -14,7 +14,7 @@ class INotificationChannel(ABC):
             Sends a notifications to the user.
     """
     @abstractmethod
-    async def notify(self, purchase_details: PurchaseDetailsModel) -> bool: ...
+    async def notify(self, purchase_details: PaymentData) -> bool: ...
 
 class ICardValidator(ABC):
     """

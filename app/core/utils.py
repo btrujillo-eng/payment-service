@@ -1,6 +1,6 @@
 from .strategy import PROCESSING_NETWORK_RULES
 from .interfaces import INotificationChannel
-from schemas import PurchaseDetailsModel
+from schemas import PaymentData
 
 from collections import deque
 from typing import List, Type
@@ -45,7 +45,7 @@ def validate_card_length(processing_network: str, card_number: int) -> bool:
         
 async def dequeue(
         notifiers_queue: deque, 
-        purchase_details: PurchaseDetailsModel
+        purchase_details: PaymentData
         ) -> List[Type[INotificationChannel] | None]:
         # A list is compiled of the channels where the notifiers failed
         notifiers_failed = []

@@ -1,12 +1,12 @@
 from core import INotificationChannel
-from schemas import PurchaseDetailsModel
+from schemas import PaymentData
 
 import logging
 
 logger = logging.getLogger(__name__)
 
 class WhatsappChannel(INotificationChannel):
-    async def notify(self, purchase_details: PurchaseDetailsModel):
+    async def notify(self, purchase_details: PaymentData):
         """
         Sends a notifications to the user via WhatsApp.
         """
@@ -17,7 +17,7 @@ class WhatsappChannel(INotificationChannel):
                 ¡Hola{purchase_details.user_data.first_name}!\n\n
                 Datos de tu compra:\n
                 -----------------\n
-                Valor total: {purchase_details.amount_purchase}\n
+                Valor total: {purchase_details.transaction_amount}\n
                 Método de pago: {purchase_details.payment_method}\n
                 Id de la transacción: {purchase_details.transaction_id}\n\n
                 Gracias por tu compra.
@@ -25,7 +25,7 @@ class WhatsappChannel(INotificationChannel):
             )
     
 class SmsChannel(INotificationChannel):
-    async def notify(self, purchase_details: PurchaseDetailsModel):
+    async def notify(self, purchase_details: PaymentData):
         """
         Sends a notifications to user via SMS.
         """
@@ -36,7 +36,7 @@ class SmsChannel(INotificationChannel):
                 ¡Hola{purchase_details.user_data.first_name}!\n\n
                 Datos de tu compra:\n
                 -----------------\n
-                Valor total: {purchase_details.amount_purchase}\n
+                Valor total: {purchase_details.transaction_amount}\n
                 Método de pago: {purchase_details.payment_method}\n
                 Id de la transacción: {purchase_details.transaction_id}\n\n
                 Gracias por tu compra.
@@ -44,7 +44,7 @@ class SmsChannel(INotificationChannel):
             )
     
 class EmailChannel(INotificationChannel):
-    async def notify(self, purchase_details: PurchaseDetailsModel):
+    async def notify(self, purchase_details: PaymentData):
         """
         Sends a notifications to the user via email.
         """
@@ -54,7 +54,7 @@ class EmailChannel(INotificationChannel):
 
             Datos de tu compra:
             -------------------------
-            Valor total: ${purchase_details.amount_purchase}
+            Valor total: ${purchase_details.transaction_amount}
             Método de pago: {purchase_details.payment_method}
             Id de la transacción: {purchase_details.transaction_id}
 

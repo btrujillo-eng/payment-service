@@ -28,16 +28,18 @@ class AmountPurchasedModel(BaseModel):
     class Config:
         # It allows Pydantic to automatically convert floats or strings to Decimal.
         json_encoders = {Decimal: str}
-        
-class PurchaseDetailsModel(BaseModel):
+
+# To configure the payment status soon.
+PaymentStatus = Literal['succeded', 'rejected']
+      
+class PaymentData(BaseModel):
     user_data : UserModel = Field(description="User's information")
-    amount_purchase : Decimal = Field(
+    transaction_amount : Decimal = Field(
         ge=0,
         decimal_places=2,
         description="Total purchase amount"
         )
-    payment_method : str
-    transaction_id : UUID
-
-# To configure the purchase status soon.
-PurchaseStatus = Literal['succeded', 'rejected']
+    payment_method_id : str = Field(description="Processing network that was used for payment")
+    transaction_id : UUID | None = Field(description="Trasaction id")
+    installments : int | None = Field(description="Number of installments in which the purchase will be paid")
+    payment_status : PaymentStatus = Field(description="Payment status. The status could be 'succeded' or 'rejected'")

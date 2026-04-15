@@ -1,5 +1,5 @@
 from .notifiers import EmailChannel, WhatsappChannel, SmsChannel
-from schemas import PurchaseDetailsModel
+from schemas import PaymentData
 from core import dequeue
 
 from fastapi import HTTPException, status
@@ -24,7 +24,7 @@ class NotificationService:
         self.whatsapp_channel = whatsapp_channel
         self.sms_channel = sms_channel  
     
-    async def notify_all(self, purchase_details: PurchaseDetailsModel):
+    async def notify_all(self, purchase_details: PaymentData):
         queue = deque([(self.email_channel, 0), (self.whatsapp_channel, 0), (self.sms_channel, 0)])
         notifiers_failed = await dequeue(queue, purchase_details)
         if notifiers_failed:
