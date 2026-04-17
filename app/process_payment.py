@@ -44,3 +44,7 @@
 # purchase_details = PurchaseDetailsModel(user_data=user, amount_purchase=5000, payment_method='tarjeta', transaction_id=4) # type: ignore
 # print(dequeue(NOTIFICATIONS_QUEUE, purchase_details))
 
+num = "8855656223"
+
+bin = num[:4]
+print(bin)

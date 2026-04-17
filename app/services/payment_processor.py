@@ -1,12 +1,12 @@
-from core import IPaymentPocessor
-from schemas import AmountPurchasedModel, DiscountStrategy
+from core import IPaymentProcessor
+from schemas import PaymentAmountModel, DiscountStrategy
 
-class PaymentProcessorService(IPaymentPocessor):
+class PaymentProcessorService(IPaymentProcessor):
     def __init__(self):
         pass
     
-    def process(
+    async def process(
         self, payment_method: str, discount_type: DiscountStrategy | str, 
-        amount_purchased: AmountPurchasedModel
+        amount_purchased: PaymentAmountModel
         ) -> str:
         ...

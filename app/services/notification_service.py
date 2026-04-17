@@ -1,5 +1,5 @@
 from .notifiers import EmailChannel, WhatsappChannel, SmsChannel
-from schemas import PaymentData
+from schemas import PaymentResponse, PaymentData
 from core import dequeue
 
 from fastapi import HTTPException, status
@@ -24,17 +24,18 @@ class NotificationService:
         self.whatsapp_channel = whatsapp_channel
         self.sms_channel = sms_channel  
     
-    async def notify_all(self, purchase_details: PaymentData):
+    async def notify_all(self, payment_response: PaymentResponse, payment_data: PaymentData):
         queue = deque([(self.email_channel, 0), (self.whatsapp_channel, 0), (self.sms_channel, 0)])
-        notifiers_failed = await dequeue(queue, purchase_details)
+        notifiers_failed = await dequeue(queue, payment_response)
         if notifiers_failed:
-            logger.error(f"Critical failure: The notification service is not responding | Transaction id: {purchase_details.transaction_id}")
+            logger.error(f"Critical failure: The notification service is not responding | Transaction id: {payment_response.transaction_id}")
             raise HTTPException(
                 status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
                 detail="Servicio temporalmente inestable. Intente nuevamente mas tarde"
             )
+            
         logger.info(
             f"""
-                The user {purchase_details.user_data.first_name} {purchase_details.user_data.first_surname} was successfully notified of id: {purchase_details.transaction_id}
+                The user {payment_data.user_data.first_name} {payment_data.user_data.first_surname} was successfully notified of id: {payment_response.transaction_id}
             """
         )

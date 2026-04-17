@@ -1,38 +1,38 @@
 from core import IDiscountStrategy
-from schemas import AmountPurchasedModel
+from schemas import PaymentAmountModel
 from decimal import Decimal
 
 class NoDiscount(IDiscountStrategy):
-    def apply_discount(self, amount_purchased: AmountPurchasedModel) -> AmountPurchasedModel:
+    async def apply_discount(self, payment_amount: PaymentAmountModel) -> PaymentAmountModel:
         """
         Doesn't returns a discount value.
         """
-        return AmountPurchasedModel( amount=Decimal("0"))
+        return PaymentAmountModel(transaction_amount=Decimal("0"))
     
 class ChristmasDiscount(IDiscountStrategy):
-    def apply_discount(self, amount_purchased: AmountPurchasedModel) -> AmountPurchasedModel:
+    async def apply_discount(self, payment_amount: PaymentAmountModel) -> PaymentAmountModel:
         """
         Returns a discount value of 30%.
         """
-        discount_value = amount_purchased.amount * Decimal("0.30")
-        return AmountPurchasedModel( amount=Decimal(discount_value))
+        discount_value = payment_amount.transaction_amount * Decimal("0.30")
+        return PaymentAmountModel(transaction_amount=Decimal(discount_value))
     
 class FixedDiscount(IDiscountStrategy):
-    def apply_discount(self, amount_purchased: AmountPurchasedModel) -> AmountPurchasedModel:
+    async def apply_discount(self, payment_amount: PaymentAmountModel) -> PaymentAmountModel:
         """
         Returns a fixed discount value of 5000 if the purchase amount
         is greater than 15000. If purchase amount is less than 15000,
         doesn't return a discount value.
         """
-        if amount_purchased.amount >= Decimal("15000"):
-            return AmountPurchasedModel( amount=Decimal("5000"))
-        return AmountPurchasedModel( amount=Decimal("0"))
+        if payment_amount.transaction_amount >= Decimal("15000"):
+            return PaymentAmountModel(transaction_amount=Decimal("5000"))
+        return PaymentAmountModel(transaction_amount=Decimal("0"))
     
 class BlackFridayDiscount(IDiscountStrategy):
-    def apply_discount(self, amount_purchased: AmountPurchasedModel) -> AmountPurchasedModel:
+    async def apply_discount(self, payment_amount: PaymentAmountModel) -> PaymentAmountModel:
         """
         Returns a discount value of 20%.
         """
-        discount_value = amount_purchased.amount * Decimal("0.20")
-        return AmountPurchasedModel( amount=discount_value)
+        discount_value = payment_amount.transaction_amount * Decimal("0.20")
+        return PaymentAmountModel(transaction_amount=discount_value)
     

@@ -19,6 +19,6 @@ PROCESSING_NETWORK_RULES: List[Dict[str, Any]] = [
 ]
 
 NOTIFICATION_METHOD: Dict[PaymentStatus, str] = {
-    "rejected": "notify_rejected_payment",
-    "succeded": "notify_successful_payment"
+    PaymentStatus.FAILED: "notify_rejected_payment",
+    PaymentStatus.SUCCEDED: "notify_successful_payment"
 }

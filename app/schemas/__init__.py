@@ -1,15 +1,17 @@
-from .payment import(
-    DiscountStrategy, AmountPurchasedModel,
-    PaymentData, PaymentMethods, 
-    PaymentStatus
-    )
 from .user import UserModel, ContactInfoModel
+from .payment import(
+    DiscountStrategy, PaymentMethods, 
+    PaymentData, PaymentAmountModel,
+    PaymentStatus, PaymentResponse
+)
+
 __all__ = [
-    "DiscountStrategy",
-    "AmountPurchasedModel",
-    "PaymentData",
-    "PaymentMethods",
-    "PaymentStatus",
     "UserModel",
-    "ContactInfoModel"
+    "ContactInfoModel",
+    "DiscountStrategy",
+    "PaymentMethods",
+    "PaymentData",
+    "PaymentAmountModel",
+    "PaymentStatus",
+    "PaymentResponse"  
 ]

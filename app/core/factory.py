@@ -1,4 +1,4 @@
-from core import IPaymentPocessor, get_payment_method
+from core import IPaymentProcessor, get_payment_method
 from schemas import PaymentMethods
 
 from typing import Type
@@ -21,9 +21,9 @@ class PaymentMethodFactory:
     """
     def __init__(
             self,
-            card_method: Type[IPaymentPocessor],
-            paypal_method: Type[IPaymentPocessor],
-            cripto_method: Type[IPaymentPocessor]
+            card_method: Type[IPaymentProcessor],
+            paypal_method: Type[IPaymentProcessor],
+            cripto_method: Type[IPaymentProcessor]
             ):
         self.payment_methods = {
             PaymentMethods.CARD: card_method,
@@ -31,11 +31,11 @@ class PaymentMethodFactory:
             PaymentMethods.CRYPTO: cripto_method 
         }
         
-        def create_payment_processor(payment_method: PaymentMethods | str) -> IPaymentPocessor:
+        async def create_payment_processor(payment_method: PaymentMethods | str) -> IPaymentProcessor:
             """
             Create a payment processor based on the payment method.
             """
-            payment_type = get_payment_method(payment_method)
+            payment_type = await get_payment_method(payment_method)
             processor_class = self.payment_methods.get(payment_type)
             
             if not processor_class:

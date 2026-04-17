@@ -1,7 +1,7 @@
-from .strategy import PROCESSING_NETWORK_RULES
+from .constants import PROCESSING_NETWORK_RULES
 from .interfaces import INotificationChannel
-from .managers import get_notification_method
-from schemas import PaymentData
+from .strategies import get_notification_method
+from schemas import PaymentResponse, PaymentAmountModel
 
 from collections import deque
 from typing import List, Type
@@ -9,7 +9,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-def luhn_algorit(card_number: int) -> bool:
+async def luhn_algorit(card_number: int) -> bool:
     """
     Valid if the card number is mathematically correct.
     """
@@ -36,7 +36,7 @@ def luhn_algorit(card_number: int) -> bool:
     
     return False
 
-def validate_card_length(processing_network: str, card_number: int) -> bool:
+async def validate_card_length(processing_network: str, card_number: int) -> bool:
     """
     Valid if the card number length is valid, depending
     on your processing network.
@@ -46,21 +46,29 @@ def validate_card_length(processing_network: str, card_number: int) -> bool:
             return len(str(card_number)) in rule['lengths']
     
     return False
+
+async def to_stripe_amount(payment_amount: PaymentAmountModel) -> int:
+    """
+    It's responsible for transferring the payment amount to Stripe in the requested format.
+    """
+    return int(payment_amount.transaction_amount * 100)
         
 async def dequeue(
         notifiers_queue: deque, 
-        payment_data: PaymentData
+        payment_response: PaymentResponse
         ) -> List[Type[INotificationChannel] | None]:
         # A list is compiled of the channels where the notifiers failed
         notifiers_failed = []
+        
         while notifiers_queue:
             notifier, attempts = notifiers_queue.popleft()
-            notification_method = get_notification_method(payment_data, notifier)
+            notification_method = await get_notification_method(payment_response, notifier)
+            
             if not notification_method:
                 logger.critical("No notification method was found for the notification channels")
                 raise RuntimeError("No notification method was found for the notification channels")
             
-            if await notifier.notification_method(payment_data):
+            if await notifier.notification_method(payment_response):
                 logger.info(f"Notification success with {notifier}")
             else:
                 new_attempts = attempts + 1
@@ -70,4 +78,3 @@ async def dequeue(
                     notifiers_failed.append(notifier)
         
         return notifiers_failed
-    

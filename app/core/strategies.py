@@ -1,13 +1,13 @@
-from schemas import PaymentMethods, DiscountStrategy, PaymentData, PaymentStatus
+from schemas import PaymentMethods, DiscountStrategy, PaymentResponse, PaymentStatus
 from core import IDiscountStrategy, INotificationChannel
-from .strategy import PROCESSING_NETWORK_RULES, NOTIFICATION_METHOD
+from .constants import PROCESSING_NETWORK_RULES, NOTIFICATION_METHOD
 
-from typing import Dict, cast
+from typing import Dict
 import logging
 
 logger = logging.getLogger(__name__)
 
-def get_payment_method(type_payment_method: PaymentMethods | str) -> PaymentMethods:
+async def get_payment_method(type_payment_method: PaymentMethods | str) -> PaymentMethods:
     """
     It searches for a payment method and returns it depending on the type payment method.
     
@@ -15,15 +15,14 @@ def get_payment_method(type_payment_method: PaymentMethods | str) -> PaymentMeth
     """
     if isinstance(type_payment_method, str):
         try:
-            enum_method = PaymentMethods(type_payment_method.strip().lower())
-            return enum_method
+            type_payment_method = PaymentMethods(type_payment_method.strip().lower())
         except ValueError:
             logger.error(f"The payment method of type {type_payment_method} not found")
             raise ValueError(f"The payment method of type {type_payment_method} not found")
-    else:
-        return type_payment_method
+    
+    return type_payment_method
    
-def get_discount_strategy(
+async def get_discount_strategy(
         discount_type: DiscountStrategy | str,
         strategy_map: Dict[DiscountStrategy, IDiscountStrategy],
         default: IDiscountStrategy | None = None
@@ -41,13 +40,14 @@ def get_discount_strategy(
             
     default_class = default
     strategy_class = strategy_map.get(discount_type, default_class)
+    
     if not strategy_class:
         logger.critical("No default strategy was found on the map")
         raise RuntimeError("Critical error: No default strategy was found on the map")
     
     return strategy_class
 
-def get_processing_network(card_number: int) -> str | None:
+async def get_processing_network(card_number: int) -> str | None:
     """
     Search for a processing network based on the card number.
     """
@@ -63,12 +63,21 @@ def get_processing_network(card_number: int) -> str | None:
             
     return None
 
-def get_notification_method(payment_data: PaymentData, channel_instance: INotificationChannel):
-    status = cast(PaymentStatus, payment_data.payment_status)
+async def get_payment_status(payment_status: PaymentStatus | str, default: PaymentStatus) -> PaymentStatus:
+    if isinstance(payment_status, str):
+        try:
+            payment_status = PaymentStatus(payment_status.strip().lower())
+        except ValueError:
+            return default
+            
+    return payment_status
+    
+async def get_notification_method(payment_response: PaymentResponse, channel_instance: INotificationChannel):
+    status = await get_payment_status(payment_response.payment_status, PaymentStatus.FAILED)
     method_name = NOTIFICATION_METHOD.get(status)
     if not method_name:
         method_name = "notify_rejected_payment"
     
-    # getattr getattrs is used to dynamically search for a method in its object or instance using its name in str.
+    # getattr is used to dynamically search for a method in its object or instance using its name in str.
     method = getattr(channel_instance, method_name, None)
     return method

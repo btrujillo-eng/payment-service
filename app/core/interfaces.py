@@ -1,5 +1,6 @@
+from schemas import DiscountStrategy, PaymentData, PaymentAmountModel, PaymentResponse
+
 from abc import ABC, abstractmethod
-from schemas import DiscountStrategy, AmountPurchasedModel, PaymentData
 
 class INotificationChannel(ABC):
     """
@@ -9,20 +10,24 @@ class INotificationChannel(ABC):
     method 'notify'.
     
     Methods:
-        notify_successful_payment(payment_data: PaymentData)
+        notify_successful_payment(payment_data: PaymentData, payment_response: PaymentResponse)
         
             Sends a notifications to the user when the payment has been successfully
             completed.
               
-        notify_rejected_payment(payment_data: PaymentData)
+        notify_rejected_payment(payment_data: PaymentData, payment_response: PaymentResponse)
 
             Sends a notifications to the user when the payment has been rejected.
     """
     @abstractmethod
-    async def notify_successful_payment(self, payment_data: PaymentData): ...
+    async def notify_successful_payment(self, payment_data: PaymentData, payment_response: PaymentResponse): ...
     
     @abstractmethod
-    async def notify_rejected_payment(self, payment_data: PaymentData):...
+    async def notify_failed_payment(self, payment_data: PaymentData, payment_response: PaymentResponse):...
+    
+class INotificationChannelTemplate(ABC):
+    
+    @abstractmethod
 
 class ICardValidator(ABC):
     """
@@ -37,7 +42,7 @@ class ICardValidator(ABC):
             Valid if a card is valid based on your number.
     """
     @abstractmethod
-    def validate(self, card_number: int) -> bool:...
+    async def validate(self, card_number: int) -> bool:...
     
 class IDiscountStrategy(ABC):
     """
@@ -51,22 +56,21 @@ class IDiscountStrategy(ABC):
         discount value.
     
     Methods:
-        apply_discount(amount_purchased: AmountModel) -> AmountModel
+        apply_discount(payment_amount: AmountModel) -> AmountModel
         
             Returns the discount value.
     """
     @abstractmethod
-    def apply_discount(self, amount_purchased: AmountPurchasedModel) -> AmountPurchasedModel: ...
+    async def apply_discount(self, payment_amount: PaymentAmountModel) -> PaymentAmountModel: ...
           
 class IShoppingCart(ABC):
     """
     Interface for a shopping cart.
     
-    Any class that implement this interface must define the
-    method 'calculate_total'.
+    Any class that implement this interface must define the method 'calculate_total'.
     
     Methods:
-        calculate_total(amount_purchased: AmountModel, discount_type: DiscountStrategy | str) -> AmountModel
+        calculate_total(payment_amount: AmountModel, discount_type: DiscountStrategy | str) -> AmountModel
         
             Apply a discount type to the purchase and calculate
             the total price.
@@ -74,11 +78,25 @@ class IShoppingCart(ABC):
     @abstractmethod
     def calculate_total(
         self,
-        amount_purchased: AmountPurchasedModel,
+        payment_amount: PaymentAmountModel,
         discount_type: DiscountStrategy | str
-    ) -> AmountPurchasedModel: ...
+    ) -> PaymentAmountModel: ...
+    
+class IPaymentGateway(ABC):
+    """
+    Interface for payment gateways.
+    
+    Any class that implement this interface must define the method 'process_payment'.
+    
+    Methods:
+        process_payment(payment_data: PaymentData) -> PaymentResponse
 
-class IPaymentPocessor(ABC):
+            It's responsible for processing a payment and returning the payment details.
+    """
+    @abstractmethod
+    async def process_payment(self, payment_data: PaymentData) -> PaymentResponse: ...
+
+class IPaymentProcessor(ABC):
     """
     Interface for payment processor.
     
@@ -88,13 +106,13 @@ class IPaymentPocessor(ABC):
     Methods:
         process(
             self, payment_method: str, discount_type: DiscountStrategy | str,
-            amount_purchased: AmountPurchasedModel
+            payment_amount: AmountPurchasedModel
             ) -> str
         
             processes payments with a predetermined payment method.
     """
     @abstractmethod
-    def process(
+    async def process(
         self, payment_method: str, discount_type: DiscountStrategy | str,
-        amount_purchased: AmountPurchasedModel
+        payment_amount: PaymentAmountModel
         ) -> str: ...
