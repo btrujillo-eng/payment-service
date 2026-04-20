@@ -1,7 +1,9 @@
-from core import INotificationChannel
+from .notification_channel_templates import EmailChannelTemplate, PhoneChannelTemplate
 from schemas import PaymentData, PaymentResponse
+from core import INotificationChannel
 
 from dotenv import load_dotenv
+from twilio.rest import Client
 import logging
 import resend
 import os
@@ -10,215 +12,180 @@ _ = load_dotenv()
 
 logger = logging.getLogger(__name__)
 
-
 class WhatsappChannel(INotificationChannel):
-    async def notify_successful_payment(
-        self, payment_data: PaymentData, payment_response: PaymentResponse
-    ):
+    """
+    This is the WhatsApp Channel.
+    
+    It's responsible for sending WhatsApp notifications to user regarding payment details. Any class that 
+    implement this channel can define the'notify_successful_payment' and 'notify_failed_payment' methods.
+    """
+    def __init__(self, whatsapp_channel_template: PhoneChannelTemplate):
+        self.whatsapp_channel_template = whatsapp_channel_template
+        self.client = Client(
+            os.getenv("TWILIO_ACCOUNT_SID"),
+            os.getenv("TWILIO_AUTH_TOKEN")
+        )
+        self.from_ = f"whatsapp:{os.getenv('TWILIO_PHONE')}"
+        
+    async def notify_successful_payment( self, payment_data: PaymentData, payment_response: PaymentResponse):
         """
         Sends a notifications to the user via WhatsApp when the payment
         has been successfully completed.
         """
-        # Simulating sending a message via WhatsApp.
-        if payment_data.user_data.contac_info.phone_number:
-            logger.info(
-                f"""
-                ¡Hola{payment_data.user_data.first_name}!\n\n
-                Datos de tu compra:\n
-                -----------------\n
-                Valor total: {payment_data.transaction_amount}\n
-                Método de pago: Pagaste con tu tarjeta {payment_response.payment_method_id} terminada en {payment_response.last_digits_card}\n
-                Id de la transacción: {payment_response.transaction_id}\n\n
-                Gracias por tu compra.
-                """
-            )
-
+        if payment_data.user_data.contact_info.phone_number:
+            try:
+                self.client.messages.create(
+                    from_=self.from_,
+                    to=f"whatsapp:+57{payment_data.user_data.contact_info.phone_number}",
+                    body=await self.whatsapp_channel_template.successful_payment_template(payment_data, payment_response)
+                )
+                logger.info(f"[WhatsAppChannel] The transaction with ID {payment_response.transaction_id} was succesfully notified.")
+            except Exception:
+                return False
+            
         logger.info(
-            """
-            The user could not be notified because they did not register
-             a phone number to notify them of the purchase details.
+            f"""
+            [WhatsappChannel] The user could not be notified because they did not register
+             a phone number to notify them of the payment details with TRANSACTION ID {payment_response.transaction_id}.
             """
         )
-        resend.api_key = os.getenv("RESEND_API_KEY")
 
-    async def notify_failed_payment(
-        self, payment_data: PaymentData, payment_response: PaymentResponse
-    ):
+    async def notify_failed_payment(self, payment_data: PaymentData, payment_response: PaymentResponse):
         """
         Sends a notifications to user via WhatsApp when the payment has been
         rejected.
         """
-        if payment_data.user_data.contac_info.phone_number:
-            logger.info(
-                f"""
-                ¡Hola{payment_data.user_data.first_name}!\n\n
-                No puedes hacer el pago con tu tarjeta {payment_response.payment_method_id} terminada en {payment_response.last_digits_card}\n
-                Pero no te preocupes, aún puedes terminar tu compra agregando recursos a tu tarjeta o cambiando de medio de pago\n\n
-                
-                Para más detalles contácta a tu banco.
-                """
-            )
-
+        if payment_data.user_data.contact_info.phone_number:
+            try:
+                self.client.messages.create(
+                    from_=self.from_,
+                    to=f"whatsapp:+57{payment_data.user_data.contact_info.phone_number}",
+                    body=await self.whatsapp_channel_template.failed_payment_template(payment_data, payment_response)
+                )
+                logger.info(f"[WhatsAppChannel] The information about TRANSACTION ID {payment_response.transaction_id} was sent succesfully.")
+            except Exception:
+                return False
+            
         logger.info(
-            """
-            The user could not be notified because they did not register
-             a phone number to notify them of the purchase details.
+            f"""
+            [WhatsappChannel] The user could not be notified because they did not register
+             a phone number to notify them of the payment details with TRANSACTION ID {payment_response.transaction_id}.
             """
         )
 
-
 class SmsChannel(INotificationChannel):
-    async def notify_successful_payment(
-        self, payment_data: PaymentData, payment_response: PaymentResponse
-    ):
+    """
+    This is the SMS Channel.
+    
+    It's responsible for sending SMS notifications to user regarding payment details. Any class that implement
+    this channel can define the 'notify_successful_payment' and ' notify_failed_payment' methods.
+    """
+    def __init__(self, sms_channel_template: PhoneChannelTemplate):
+        self.sms_channel_template = sms_channel_template
+        self.client = Client(
+            os.getenv("TWILIO_ACCOUNT_SID"),
+            os.getenv("TWILIO_AUTH_TOKEN")
+        )
+        self.from_ = os.getenv("TWILIO_PHONE")
+        
+    async def notify_successful_payment(self, payment_data: PaymentData, payment_response: PaymentResponse):
         """
         Sends a notifications to user via SMS when the payment has
         been successfully completed.
         """
-        if payment_data.user_data.contac_info.phone_number:
-            # Simulating sending a message via SMS.
-            logger.info(
-                f"""
-                ¡Hola{payment_data.user_data.first_name}!\n\n
-                Datos de tu compra:\n
-                -----------------\n
-                Valor total: {payment_data.transaction_amount}\n
-                Método de pago: Pagaste con tu tarjeta {payment_response.payment_method_id} terminada en {payment_response.last_digits_card}\n
-                Id de la transacción: {payment_response.transaction_id}\n\n
-                Gracias por tu compra.
-                """
-            )
-
+        if payment_data.user_data.contact_info.phone_number:
+            try:
+                self.client.messages.create(
+                    from_=self.from_,
+                    to=f"+57{payment_data.user_data.contact_info.phone_number}",
+                    body=await self.sms_channel_template.successful_payment_template(payment_data, payment_response)
+                )
+                logger.info(f"[SmsChannel] The information about TRANSACTION ID {payment_response.transaction_id} was sent successfully.")
+            except Exception:
+                return False
+            
         logger.info(
-            """
-            The user could not be notified because they did not register
-             a phone number to notify them of the purchase details.
+            f"""
+            [SmsChannel] The user could not be notified because they did not register
+             a phone number to notify them of the payment details with TRANSACTION ID {payment_response.transaction_id}.
             """
         )
 
-    async def notify_failed_payment(
-        self, payment_data: PaymentData, payment_response: PaymentResponse
-    ):
+    async def notify_failed_payment(self, payment_data: PaymentData, payment_response: PaymentResponse):
         """
         Sends a notifications to user via SMS when the payment has been rejected.
         """
-        if payment_data.user_data.contac_info.phone_number:
-            logger.info(
-                f"""
-                ¡Hola{payment_data.user_data.first_name}!\n\n
-                No puedes hacer el pago con tu tarjeta {payment_response.payment_method_id} terminada en {payment_response.last_digits_card}\n
-                Pero no te preocupes, aún puedes terminar tu compra agregando recursos a tu tarjeta o cambiando de medio de pago\n\n
-                
-                Para más detalles contácta a tu banco.
-                """
-            )
+        if payment_data.user_data.contact_info.phone_number:
+            try:
+                self.client.messages.create(
+                    from_=self.from_,
+                    to=f"+57{payment_data.user_data.contact_info.phone_number}",
+                    body=self.sms_channel_template.failed_payment_template(payment_data, payment_response)
+                )
+                logger.info(f"[SmsChannel] The information about TRANSACTION ID {payment_response.transaction_id} was sent successfully.")
+            except Exception:
+                return False
 
         logger.info(
-            """
-            The user could not be notified because they did not register
-             a phone number to notify them of the purchase details.
+            f"""
+            [SmsChannel] The user could not be notified because they did not register
+             a phone number to notify them of the payment details with TRANSACTION ID {payment_response.transaction_id}.
             """
         )
 
-
 class EmailChannel(INotificationChannel):
-    async def notify_successful_payment(
-        self, payment_data: PaymentData, payment_response: PaymentResponse
-    ):
+    """
+    This is the Email Channel.
+    
+    It's responsible for sending email notifications to user regarding payment details. Any class that implement
+    this channel can define the 'notify_successful_payment' and ' notify_failed_payment' methods.
+    """
+    def __init__(self, email_channel_template: EmailChannelTemplate):
+        self.email_channel_template = email_channel_template
+        self.resend = resend.api_key = os.getenv("RESEND_API_KEY")
+        
+    async def notify_successful_payment(self, payment_data: PaymentData, payment_response: PaymentResponse):
         """
         Sends a notifications to the user via email when the payment has
         been successfully completed.
         """
-        if payment_data.user_data.contac_info.email:
-            resend.Emails.send({
-                "from": "onboarding@resend.dev",
-                "to": payment_data.user_data.contac_info.email,
-                "subject": "Confirmación de tu compra",
-                "html": self._successful_payment_template(payment_data, payment_response)
-            })
+        if payment_data.user_data.contact_info.email:
+            try:
+                resend.Emails.send({
+                    "from": "onboarding@resend.dev",
+                    "to": payment_data.user_data.contact_info.email,
+                    "subject": "✅ Confirmación de tu compra",
+                    "html": await self.email_channel_template.successful_payment_template(payment_data, payment_response)
+                })
+                logger.info(f"[EmailChannel] The information about TRANSACTION ID {payment_response.transaction_id} was sent successfully.")
+            except Exception:
+                return False
             
         logger.info(
-            """
-            The user could not be notified because they did not register
-             a email to notify them of the purchase details.
+            f"""
+            [EmailChannel] The user could not be notified because they did not register
+             a phone number to notify them of the payment details with TRANSACTION ID {payment_response.transaction_id}.
             """
         )
-
-    async def notify_failed_payment(
-        self, payment_data: PaymentData, payment_response: PaymentResponse
-    ):
+    async def notify_failed_payment(self, payment_data: PaymentData, payment_response: PaymentResponse):
         """
         Sends a notifications to the user via email when the payment has been rejected.
         """
-        if payment_data.user_data.contac_info.email:
-            message_body = f"""
-            ¡Hola {payment_data.user_data.first_name}!
-
-            No puedes hacer el pago con tu tarjeta {payment_response.payment_method_id} terminada en {payment_response.last_digits_card}
-
-            Pero no te preocupes, aún puedes terminar tu compra agregando recursos a tu tarjeta o cambiando de medio de pago
-            
-            Para más detalles contácta a tu banco.
-            """
-            # Simulating sending a message via email.
-            from email.mime.text import MIMEText
-
-            mensaje_email = MIMEText(message_body, "plain", "utf-8")
-
-            mensaje_email["Subject"] = "Rechazamos tu pago"
-            mensaje_email["From"] = "tienda@d1.com"
-            mensaje_email["To"] = payment_data.user_data.contac_info.email
+        if payment_data.user_data.contact_info.email:
+            try:
+                resend.Emails.send({
+                    "from": "onboarding@resend.dev",
+                    "to": payment_data.user_data.contact_info.email,
+                    "subject": "❌ Rechazamos tu pago",
+                    "html": await self.email_channel_template.failed_payment_template(payment_data, payment_response)
+                })
+                logger.info(f"[EmailChannel] The information about TRANSACTION ID {payment_response.transaction_id} was sent succesfully.")
+            except Exception:
+                return False
 
         logger.info(
-            """
-            The user could not be notified because they did not register
-             a email to notify them of the purchase details.
+            f"""
+            [EmailChannel] The user could not be notified because they did not register
+             a phone number to notify them of the payment details with TRANSACTION ID {payment_response.transaction_id}.
             """
         )
-
-    def _successful_payment_template(
-        self, payment_data: PaymentData, payment_response: PaymentResponse
-        ) -> str:
-        return f"""
-            <h2>✅ Pago confirmado</h2>
-            <p>Hola <b>{payment_data.user_data.first_name}</b></p>
-            <table>
-                <tr>
-                    <td>Id de Transacción</td>                        
-                    <td>{payment_response.transaction_id}</td>
-                </tr>
-                <tr>
-                    <td>Valor Total</td>
-                    <td>{payment_response.transaction_amount} {payment_response.currency}</td>
-                </tr>
-                <tr>
-                    <td>Fecha</td>
-                    <td>{payment_response.created_at}</td>
-                </tr>
-                <tr>
-                    <td>Método de Pago</td>
-                    <td>Pagaste con tu {payment_response.payment_method_id} terminada en {payment_response.last_digits_card}</td>
-                </tr>
-            </table>
-        """
-        
-    def _failed_payment_template(self, payment_data: PaymentData, payment_response: PaymentResponse
-        ) -> str:
-        return f"""
-            <h2>❌ Rechazamos tu pago</h2>
-            <p>Hola <b>{payment_data.user_data.first_name}</b></p>
-            <table>
-                <tr>
-                    <td>Id de Transacción</td>
-                    <td>{payment_response.transaction_id}
-                </tr>
-                <tr>
-                    <td>Fecha</td>
-                    <td>{payment_response.created_at}</td>
-                </tr>
-                <tr>
-                    <td>Motivo</td>
-                    <td>Saldo insuficiente en tu {payment_response.payment_method_id} terminada en {payment_response.last_digits_card}</td>
-                </tr>
-            </table>
-        """

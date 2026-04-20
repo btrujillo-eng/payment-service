@@ -38,4 +38,4 @@ class UserModel(BaseModel):
         pattern=r'^[a-zA-ZáéíóúÁÉÍÓÚñÑ]+$',
         description="User's middle surname"
     )
-    contac_info : ContactInfoModel = Field(description="User's contact info")
+    contact_info : ContactInfoModel = Field(description="User's contact info")

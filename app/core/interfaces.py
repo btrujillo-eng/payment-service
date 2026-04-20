@@ -6,8 +6,8 @@ class INotificationChannel(ABC):
     """
     Interface for notification channels.
     
-    Any class that implement this interface must define the
-    method 'notify'.
+    Any class that implement this interface must define the methods 'notify_successful_payment' and
+    notify_failed_payment
     
     Methods:
         notify_successful_payment(payment_data: PaymentData, payment_response: PaymentResponse)
@@ -15,7 +15,7 @@ class INotificationChannel(ABC):
             Sends a notifications to the user when the payment has been successfully
             completed.
               
-        notify_rejected_payment(payment_data: PaymentData, payment_response: PaymentResponse)
+        notify_failed_payment(payment_data: PaymentData, payment_response: PaymentResponse)
 
             Sends a notifications to the user when the payment has been rejected.
     """
@@ -26,8 +26,26 @@ class INotificationChannel(ABC):
     async def notify_failed_payment(self, payment_data: PaymentData, payment_response: PaymentResponse):...
     
 class INotificationChannelTemplate(ABC):
+    """
+    Interface for notification channel templates.
+    
+    Any class that implement this interface must define the methods 'successful_payment_template' and
+    'failed_payment_template'.
+    
+    Methods:
+        successful_payment_template(payment_data: PaymentData, payment_response: PaymentResponse) -> str
+
+            It's responsible for storing the template to send the payment confirmation message.
+            
+        failed_payment_template(payment_data: PaymentData, payment_response: PaymentResponse) -> str
+        
+            It's responsible for storing the template to send the payment error message.
+    """
+    @abstractmethod
+    async def successful_payment_template(self, payment_data: PaymentData, payment_response: PaymentResponse) -> str: ...
     
     @abstractmethod
+    async def failed_payment_template(self, payment_data: PaymentData, payment_response: PaymentResponse) -> str: ...
 
 class ICardValidator(ABC):
     """
@@ -72,15 +90,10 @@ class IShoppingCart(ABC):
     Methods:
         calculate_total(payment_amount: AmountModel, discount_type: DiscountStrategy | str) -> AmountModel
         
-            Apply a discount type to the purchase and calculate
-            the total price.
+            Apply a discount type to the purchase and calculate the total price.
     """
     @abstractmethod
-    def calculate_total(
-        self,
-        payment_amount: PaymentAmountModel,
-        discount_type: DiscountStrategy | str
-    ) -> PaymentAmountModel: ...
+    def calculate_total(self, payment_amount: PaymentAmountModel, discount_type: DiscountStrategy | str) -> PaymentAmountModel: ...
     
 class IPaymentGateway(ABC):
     """
@@ -104,15 +117,9 @@ class IPaymentProcessor(ABC):
     the method 'process'.
     
     Methods:
-        process(
-            self, payment_method: str, discount_type: DiscountStrategy | str,
-            payment_amount: AmountPurchasedModel
-            ) -> str
+        process(payment_method: str, discount_type: DiscountStrategy | str, payment_amount: AmountPurchasedModel) -> str
         
             processes payments with a predetermined payment method.
     """
     @abstractmethod
-    async def process(
-        self, payment_method: str, discount_type: DiscountStrategy | str,
-        payment_amount: PaymentAmountModel
-        ) -> str: ...
+    async def process(self, payment_method: str, discount_type: DiscountStrategy | str, payment_amount: PaymentAmountModel) -> str: ...
