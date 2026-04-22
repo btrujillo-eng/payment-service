@@ -1,5 +1,5 @@
 from schemas import PaymentData, PaymentResponse, PaymentAmountModel
-from core import IPaymentGateway,to_stripe_amount, get_processing_network
+from core import IPaymentGateway, to_stripe_amount, get_processing_network
 
 from datetime import datetime, timezone
 from stripe import StripeError
@@ -15,7 +15,16 @@ _ = load_dotenv()
 logger = logging.getLogger(__name__)
 
 class StripeGateway(IPaymentGateway):
+    """
+    This is a Stripe payment gateway.
+    
+    It is responsible for payment processing and returning the payment details. Any 
+    class that implement this payment gateway can define the 'process_payment' method.
+    """
     async def process_payment(self, payment_data: PaymentData) -> PaymentResponse:
+        """
+        It's responsible for processing a payment and returning the payment details.
+        """
         stripe.api_key = os.getenv('STRIPE_API_KEY')
         amount = await to_stripe_amount(PaymentAmountModel(transaction_amount=payment_data.transaction_amount))
         source = await get_processing_network(payment_data.card_number)

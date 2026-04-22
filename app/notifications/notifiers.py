@@ -1,4 +1,4 @@
-from .notification_channel_templates import EmailChannelTemplate, PhoneChannelTemplate
+from .template import EmailChannelTemplate, PhoneChannelTemplate
 from schemas import PaymentData, PaymentResponse
 from core import INotificationChannel
 
@@ -120,7 +120,7 @@ class SmsChannel(INotificationChannel):
                 self.client.messages.create(
                     from_=self.from_,
                     to=f"+57{payment_data.user_data.contact_info.phone_number}",
-                    body=self.sms_channel_template.failed_payment_template(payment_data, payment_response)
+                    body=await self.sms_channel_template.failed_payment_template(payment_data, payment_response)
                 )
                 logger.info(f"[SmsChannel] The information about TRANSACTION ID {payment_response.transaction_id} was sent successfully.")
             except Exception:
@@ -167,6 +167,7 @@ class EmailChannel(INotificationChannel):
              a phone number to notify them of the payment details with TRANSACTION ID {payment_response.transaction_id}.
             """
         )
+        
     async def notify_failed_payment(self, payment_data: PaymentData, payment_response: PaymentResponse):
         """
         Sends a notifications to the user via email when the payment has been rejected.

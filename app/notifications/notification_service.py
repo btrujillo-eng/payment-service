@@ -12,7 +12,8 @@ class NotificationService:
     """
     This is a notification service.
     
-    It's responsible for sending notification with information about the details of the purchase.
+    It's responsible for sending notification with information regarding payment details to user.
+    Any class that implement this service can define the 'notify_all' method
     """
     def __init__(
             self, 
@@ -25,6 +26,9 @@ class NotificationService:
         self.sms_channel = sms_channel  
     
     async def notify_all(self, payment_response: PaymentResponse, payment_data: PaymentData):
+        """
+        Is responsible for notifying the user through all notification channels.
+        """
         queue = deque([(self.email_channel, 0), (self.whatsapp_channel, 0), (self.sms_channel, 0)])
         notifiers_failed = await dequeue(queue, payment_response)
         if notifiers_failed:
