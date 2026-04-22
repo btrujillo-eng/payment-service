@@ -1,18 +1,20 @@
-from core import IShoppingCart, get_discount_strategy, STRATEGY_MAP
+from core import IShoppingCart, IDiscountStrategy, get_discount_strategy
 from schemas import PaymentAmountModel, DiscountStrategy
-from services.discounts import NoDiscount
+
+from typing import Dict
 
 class ShoppingCart(IShoppingCart):
     async def calculate_total(
-        self, amount_purchased: PaymentAmountModel, discount_type: DiscountStrategy | str
+        self, payment_amount: PaymentAmountModel, discount_type: DiscountStrategy | str,
+        strategy_map: Dict[DiscountStrategy, IDiscountStrategy], default_discount: IDiscountStrategy
         ) -> PaymentAmountModel:
         """
         Apply a discount type to the purchase and calculate
         the total price.
         """
-        discount_strategy = await get_discount_strategy(discount_type, STRATEGY_MAP, default=NoDiscount())
-        discount_value = discount_strategy.apply_discount(payment_amount=amount_purchased)
-        total_price = amount_purchased.transaction_amount - discount_value.transaction_amount
+        discount_strategy = await get_discount_strategy(discount_type, strategy_map, default=default_discount)
+        discount_value = await discount_strategy.apply_discount(payment_amount=payment_amount)
+        total_price = payment_amount.transaction_amount - discount_value.transaction_amount
         
         return PaymentAmountModel(
             transaction_amount=total_price
