@@ -1,15 +1,6 @@
-from services.discounts import NoDiscount, ChristmasDiscount, FixedDiscount, BlackFridayDiscount
-from schemas import DiscountStrategy, PaymentStatus
-from core import IDiscountStrategy
+from schemas import PaymentStatus
 
 from typing import Dict, List, Any
-
-STRATEGY_MAP: Dict[DiscountStrategy, IDiscountStrategy] = {
-        DiscountStrategy.NODISCOUNT: NoDiscount(),
-        DiscountStrategy.CHRISTMAS: ChristmasDiscount(),
-        DiscountStrategy.FIXED: FixedDiscount(),
-        DiscountStrategy.BLACKFRIDAY: BlackFridayDiscount()
-    }
 
 PROCESSING_NETWORK_RULES: List[Dict[str, Any]] = [
     {"name": "Visa", "prefixes": ("4",), "ranges": [], "lengths": [13, 16]},

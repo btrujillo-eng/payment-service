@@ -1,4 +1,5 @@
-from core import IPaymentProcessor, get_payment_method
+from .interfaces import IPaymentProcessor
+from .strategies import get_payment_method
 from schemas import PaymentMethods
 
 from typing import Type
@@ -31,20 +32,20 @@ class PaymentMethodFactory:
             PaymentMethods.CRYPTO: cripto_method 
         }
         
-        async def create_payment_processor(payment_method: PaymentMethods | str) -> IPaymentProcessor:
-            """
+    async def create_payment_processor(self, payment_method: PaymentMethods | str) -> IPaymentProcessor:
+        """
             Create a payment processor based on the payment method.
             """
-            payment_type = await get_payment_method(payment_method)
-            processor_class = self.payment_methods.get(payment_type)
+        payment_type = await get_payment_method(payment_method)
+        processor_class = self.payment_methods.get(payment_type)
             
-            if not processor_class:
-                logger.warning(
-                    f"The payment method '{payment_type}' is soport for the sistem, "
-                    "but a processor has not been implementation in the factory"
-                )
-                raise  RuntimeError(
-                    f"The payment method '{payment_type}' is soport for the sistem, "
-                    "but a processor has not been implementation in the factory"
-                )
-            return processor_class()
+        if not processor_class:
+            logger.warning(
+                f"The payment method '{payment_type}' is soport for the sistem, "
+                "but a processor has not been implementation in the factory"
+            )
+            raise  RuntimeError(
+                f"The payment method '{payment_type}' is soport for the sistem, "
+                "but a processor has not been implementation in the factory"
+            )
+        return processor_class()

@@ -1,5 +1,5 @@
 from schemas import PaymentMethods, DiscountStrategy, PaymentResponse, PaymentStatus
-from core import IDiscountStrategy, INotificationChannel
+from .interfaces import IDiscountStrategy, INotificationChannel
 from .constants import PROCESSING_NETWORK_RULES, NOTIFICATION_METHOD
 
 from typing import Dict
@@ -64,6 +64,9 @@ async def get_processing_network(card_number: int) -> str | None:
     return None
 
 async def get_payment_status(payment_status: PaymentStatus | str, default: PaymentStatus) -> PaymentStatus:
+    """
+    It is responsible for finding the payment status.
+    """
     if isinstance(payment_status, str):
         try:
             payment_status = PaymentStatus(payment_status.strip().lower())
@@ -73,6 +76,9 @@ async def get_payment_status(payment_status: PaymentStatus | str, default: Payme
     return payment_status
     
 async def get_notification_method(payment_response: PaymentResponse, channel_instance: INotificationChannel):
+    """
+    It is responsible for finding the notification method.
+    """
     status = await get_payment_status(payment_response.payment_status, PaymentStatus.FAILED)
     method_name = NOTIFICATION_METHOD.get(status)
     if not method_name:
