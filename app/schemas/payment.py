@@ -54,6 +54,7 @@ class PaymentResponse(BaseModel):
     payment_status : str = Field(description="Payment status")
     created_at : datetime = Field(description="Transaction timestamp")
     message : str | None = Field(description="Message with payment information")
+    card_number: int
     transaction_amount : Decimal = Field(
         ge=0,
         decimal_places=2,
@@ -63,6 +64,4 @@ class PaymentResponse(BaseModel):
     @computed_field(description="Last four digits of the card")
     @property
     def last_digits_card(self):
-        card_number_str = str(PaymentData.card_number)
-        last_digits = card_number_str[:4]
-        return int(last_digits)
+        return int(str(self.card_number)[-4:])
