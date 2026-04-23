@@ -1,9 +1,8 @@
-from schemas import PaymentData, PaymentResponse, PaymentAmountModel
+from schemas import BasePaymentData, PaymentResponse, PaymentAmountModel
 from core import IPaymentGateway,to_stripe_amount, get_processing_network
 
 from datetime import datetime, timezone
 from stripe import StripeError
-from decimal import Decimal
 from typing import cast
 from uuid import uuid4
 import logging
@@ -22,12 +21,12 @@ class StripeGateway(IPaymentGateway):
     def __init__(self, api_key: str):
         self.api_key = api_key
         
-    async def process_payment(self, payment_data: PaymentData) -> PaymentResponse:
+    async def process_payment(self, payment_data: BasePaymentData) -> PaymentResponse:
         """
         It's responsible for processing a payment and returning the payment details.
         """
         stripe.api_key = self.api_key
-        amount = await to_stripe_amount(PaymentAmountModel(transaction_amount=payment_data.transaction_amount))
+        amount = await to_stripe_amount(payment_data.transaction_amount)
         source = await get_processing_network(payment_data.card_number)
         source = cast(str, source)
         try:
@@ -37,7 +36,6 @@ class StripeGateway(IPaymentGateway):
                 source=source,
                 description=f"Charge for {payment_data.user_data.first_name} {payment_data.user_data.first_surname}"
             )
-            
             logger.info(f"Payment sucessful | Transaction id: {charge["id"]}")
             return PaymentResponse(
                 currency=charge["currency"],
@@ -47,7 +45,7 @@ class StripeGateway(IPaymentGateway):
                 created_at=datetime.fromtimestamp(charge["created"], tz=timezone.utc),
                 message="Pago exitoso",
                 card_number=payment_data.card_number,
-                transaction_amount=Decimal(charge["amount"])
+                transaction_amount=PaymentAmountModel(transaction_amount=charge["amount"] / 100)
             )
             
         except StripeError as e:
