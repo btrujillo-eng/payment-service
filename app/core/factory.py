@@ -22,8 +22,8 @@ class PaymentMethodFactory(IPaymentMethodFactory):
     """
     def __init__(
             self,
-            card_method: Type[IPaymentProcessor],
-            cash_method: Type[IPaymentProcessor]
+            card_method: IPaymentProcessor,
+            cash_method: IPaymentProcessor
             ):
         self.payment_methods = {
             PaymentMethods.CARD: card_method,
@@ -46,4 +46,4 @@ class PaymentMethodFactory(IPaymentMethodFactory):
                 f"The payment method '{payment_type}' is soport for the sistem, "
                 "but a processor has not been implementation in the factory"
             )
-        return processor_class()
+        return processor_class

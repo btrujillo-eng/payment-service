@@ -183,10 +183,3 @@ class EmailChannel(INotificationChannel):
                 logger.info(f"[EmailChannel] The information about TRANSACTION ID {payment_response.transaction_id} was sent succesfully.")
             except Exception:
                 return False
-
-        logger.info(
-            f"""
-            [EmailChannel] The user could not be notified because they did not register
-             a phone number to notify them of the payment details with TRANSACTION ID {payment_response.transaction_id}.
-            """
-        )
