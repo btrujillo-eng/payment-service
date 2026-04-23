@@ -1,5 +1,5 @@
-from schemas import BasePaymentData, PaymentResponse, PaymentAmountModel
-from core import IPaymentGateway,to_stripe_amount, get_processing_network
+from app.schemas import CardPaymentData, PaymentResponse, PaymentAmountModel
+from app.core import IPaymentGateway,to_stripe_amount, get_processing_network
 
 from datetime import datetime, timezone
 from stripe import StripeError
@@ -21,7 +21,7 @@ class StripeGateway(IPaymentGateway):
     def __init__(self, api_key: str):
         self.api_key = api_key
         
-    async def process_payment(self, payment_data: BasePaymentData) -> PaymentResponse:
+    async def process_payment(self, payment_data: CardPaymentData) -> PaymentResponse:
         """
         It's responsible for processing a payment and returning the payment details.
         """

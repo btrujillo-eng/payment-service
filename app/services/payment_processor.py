@@ -1,6 +1,6 @@
-from schemas import CardPaymentData, PaymentResponse
-from core import IPaymentProcessor, IPaymentGateway, ICardValidator
-from errors import CardPaymentProcessorError
+from app.schemas import CardPaymentData, PaymentResponse
+from app.core import IPaymentProcessor, IPaymentGateway, ICardValidator
+from app.errors import CardPaymentProcessorError
 
 class CardPaymentProcessor(IPaymentProcessor):
     def __init__(self, card_validator: ICardValidator, stripe_gateway: IPaymentGateway):

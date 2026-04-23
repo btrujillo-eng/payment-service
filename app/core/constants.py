@@ -1,4 +1,4 @@
-from schemas import PaymentStatus
+from app.schemas import PaymentStatus
 
 from typing import Dict, List, Any
 

@@ -1,4 +1,4 @@
-from schemas import DiscountStrategy, BasePaymentData, PaymentAmountModel, PaymentResponse, PaymentMethods
+from app.schemas import DiscountStrategy, BasePaymentData, PaymentAmountModel, PaymentResponse, PaymentMethods
 
 from abc import ABC, abstractmethod
 from typing import Dict

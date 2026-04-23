@@ -1,6 +1,6 @@
-from .template import EmailChannelTemplate, PhoneChannelTemplate
-from schemas import BasePaymentData, PaymentResponse
-from core import INotificationChannel
+from app.notifications.template import EmailChannelTemplate, PhoneChannelTemplate
+from app.schemas import BasePaymentData, PaymentResponse
+from app.core import INotificationChannel
 
 from dotenv import load_dotenv
 from twilio.rest import Client

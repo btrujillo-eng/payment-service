@@ -1,8 +1,8 @@
-from api.dependencies import (get_process_payment, get_strategy_map, get_default_discount)
-from errors import NotificationServiceError, CardPaymentProcessorError
-from core import IDiscountStrategy
-from schemas import CardPaymentData, DiscountStrategy, PaymentResponse
-from use_cases import ProcessPayment
+from app.api.dependencies import (get_process_payment, get_strategy_map, get_default_discount)
+from app.errors import NotificationServiceError, CardPaymentProcessorError
+from app.core import IDiscountStrategy
+from app.schemas import CardPaymentData, DiscountStrategy, PaymentResponse
+from app.use_cases import ProcessPayment
 
 from fastapi import Depends, APIRouter, HTTPException, status
 from typing import Dict

@@ -1,4 +1,4 @@
-from schemas import PaymentAmountModel
+from app.schemas import PaymentAmountModel
 
 async def to_stripe_amount(payment_amount: PaymentAmountModel) -> int:
     """

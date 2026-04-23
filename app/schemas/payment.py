@@ -4,7 +4,7 @@ from decimal import Decimal
 from uuid import UUID
 from datetime import datetime
 
-from .user import UserModel
+from app.schemas.user import UserModel
 
 class DiscountStrategy(str, Enum):
     NODISCOUNT = "no aplica"
@@ -55,5 +55,5 @@ class PaymentResponse(BaseModel):
     
     @computed_field(description="Last four digits of the card")
     @property
-    def last_digits_card(self):
+    def last_digits_card(self) -> int:
         return int(str(self.card_number)[-4:])

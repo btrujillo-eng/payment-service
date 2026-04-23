@@ -1,6 +1,6 @@
-from errors.error import NotificationServiceError
-from schemas import PaymentResponse, BasePaymentData
-from core import INotificationChannel, INotificationService, dequeue
+from app.errors.error import NotificationServiceError
+from app.schemas import PaymentResponse, BasePaymentData
+from app.core import INotificationChannel, INotificationService, dequeue
 
 from collections import deque
 from typing import List

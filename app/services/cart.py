@@ -1,5 +1,5 @@
-from core import IShoppingCart, IDiscountStrategy, get_discount_strategy
-from schemas import PaymentAmountModel, DiscountStrategy
+from app.core import IShoppingCart, IDiscountStrategy, get_discount_strategy
+from app.schemas import PaymentAmountModel, DiscountStrategy
 
 from typing import Dict
 

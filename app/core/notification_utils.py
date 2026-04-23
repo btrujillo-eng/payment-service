@@ -1,6 +1,6 @@
-from .interfaces import INotificationChannel
-from .strategies import get_notification_method
-from schemas import PaymentResponse, BasePaymentData
+from app.core.interfaces import INotificationChannel
+from app.core.strategies import get_notification_method
+from app.schemas import PaymentResponse, BasePaymentData
 
 from collections import deque
 from typing import List, Type

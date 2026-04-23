@@ -1,6 +1,6 @@
-from schemas import PaymentMethods, DiscountStrategy, PaymentResponse, PaymentStatus
-from .interfaces import IDiscountStrategy, INotificationChannel
-from .constants import PROCESSING_NETWORK_RULES, NOTIFICATION_METHOD
+from app.schemas import PaymentMethods, DiscountStrategy, PaymentResponse, PaymentStatus
+from app.core.interfaces import IDiscountStrategy, INotificationChannel
+from app.core.constants import PROCESSING_NETWORK_RULES, NOTIFICATION_METHOD
 
 from typing import Dict
 import logging

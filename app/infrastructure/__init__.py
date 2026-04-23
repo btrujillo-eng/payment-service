@@ -1,4 +1,4 @@
-from gateway.stripe_gateway import StripeGateway
+from app.infrastructure.gateway.stripe_gateway import StripeGateway
 
 __all__ = [
     "StripeGateway"

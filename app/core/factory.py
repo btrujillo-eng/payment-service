@@ -1,8 +1,7 @@
-from .interfaces import IPaymentProcessor, IPaymentMethodFactory
-from .strategies import get_payment_method
-from schemas import PaymentMethods
+from app.core.interfaces import IPaymentProcessor, IPaymentMethodFactory
+from app.core.strategies import get_payment_method
+from app.schemas import PaymentMethods
 
-from typing import Type
 import logging
 
 logger = logging.getLogger(__name__)

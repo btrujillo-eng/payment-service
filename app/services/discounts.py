@@ -1,5 +1,6 @@
-from core import IDiscountStrategy
-from schemas import PaymentAmountModel
+from app.core import IDiscountStrategy
+from app.schemas import PaymentAmountModel
+
 from decimal import Decimal
 
 class NoDiscount(IDiscountStrategy):

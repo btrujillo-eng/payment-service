@@ -1,5 +1,6 @@
-from core import IDiscountStrategy, IShoppingCart, INotificationService, IPaymentMethodFactory
-from schemas import CardPaymentData, PaymentResponse, DiscountStrategy
+from app.core import IDiscountStrategy, IShoppingCart, INotificationService, IPaymentMethodFactory
+from app.schemas import CardPaymentData, PaymentResponse, DiscountStrategy
+
 from typing import Dict
 
 class ProcessPayment:

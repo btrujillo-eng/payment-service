@@ -1,7 +1,7 @@
-from .validators import CardValidator
-from .cart import ShoppingCart
-from .payment_processor import CardPaymentProcessor
-from .discounts import BlackFridayDiscount, NoDiscount, ChristmasDiscount, FixedDiscount
+from app.services.validators import CardValidator
+from app.services.cart import ShoppingCart
+from app.services.payment_processor import CardPaymentProcessor
+from app.services.discounts import BlackFridayDiscount, NoDiscount, ChristmasDiscount, FixedDiscount
 
 __all__ = [
     "CardValidator",

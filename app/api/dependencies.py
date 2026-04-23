@@ -1,14 +1,14 @@
-from services import (CardValidator, ShoppingCart, 
+from app.services import (CardValidator, ShoppingCart, 
     CardPaymentProcessor, NoDiscount, FixedDiscount, 
     ChristmasDiscount, BlackFridayDiscount
 )
-from notifications import (NotificationService, EmailChannel, SmsChannel, 
+from app.notifications import (NotificationService, EmailChannel, SmsChannel, 
     WhatsappChannel, EmailChannelTemplate, PhoneChannelTemplate
 )
-from core import PaymentMethodFactory, IDiscountStrategy, INotificationChannel
-from infrastructure import StripeGateway
-from use_cases import ProcessPayment
-from schemas import DiscountStrategy
+from app.core import PaymentMethodFactory, IDiscountStrategy, INotificationChannel
+from app.infrastructure import StripeGateway
+from app.use_cases import ProcessPayment
+from app.schemas import DiscountStrategy
 
 from dotenv import load_dotenv
 from typing import List, Dict

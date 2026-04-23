@@ -1,5 +1,5 @@
-from schemas import BasePaymentData, PaymentResponse
-from core import INotificationChannelTemplate
+from app.schemas import BasePaymentData, PaymentResponse
+from app.core import INotificationChannelTemplate
 
 class EmailChannelTemplate(INotificationChannelTemplate):
     """
