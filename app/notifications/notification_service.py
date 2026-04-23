@@ -1,6 +1,6 @@
-from .notification_error import NotificationServiceError
-from schemas import PaymentResponse, PaymentData
-from core import INotificationChannel, dequeue
+from errors.error import NotificationServiceError
+from schemas import PaymentResponse, BasePaymentData
+from core import INotificationChannel, INotificationService, dequeue
 
 from collections import deque
 from typing import List
@@ -8,7 +8,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-class NotificationService:
+class NotificationService(INotificationService):
     """
     This is a notification service.
     
@@ -18,7 +18,7 @@ class NotificationService:
     def __init__(self, list_channels: List[INotificationChannel]):
         self.list_channels = list_channels
         
-    async def notify_all(self, payment_response: PaymentResponse, payment_data: PaymentData):
+    async def notify_all(self, payment_response: PaymentResponse, payment_data: BasePaymentData):
         """
         Is responsible for notifying the user through all notification channels.
         """

@@ -1,5 +1,5 @@
 from .template import EmailChannelTemplate, PhoneChannelTemplate
-from schemas import PaymentData, PaymentResponse
+from schemas import BasePaymentData, PaymentResponse
 from core import INotificationChannel
 
 from dotenv import load_dotenv
@@ -27,7 +27,7 @@ class WhatsappChannel(INotificationChannel):
         )
         self.from_ = f"whatsapp:{os.getenv('TWILIO_PHONE')}"
         
-    async def notify_successful_payment( self, payment_data: PaymentData, payment_response: PaymentResponse):
+    async def notify_successful_payment( self, payment_data: BasePaymentData, payment_response: PaymentResponse):
         """
         Sends a notifications to the user via WhatsApp when the payment
         has been successfully completed.
@@ -50,7 +50,7 @@ class WhatsappChannel(INotificationChannel):
             """
         )
 
-    async def notify_failed_payment(self, payment_data: PaymentData, payment_response: PaymentResponse):
+    async def notify_failed_payment(self, payment_data: BasePaymentData, payment_response: PaymentResponse):
         """
         Sends a notifications to user via WhatsApp when the payment has been
         rejected.
@@ -88,7 +88,7 @@ class SmsChannel(INotificationChannel):
         )
         self.from_ = os.getenv("TWILIO_PHONE")
         
-    async def notify_successful_payment(self, payment_data: PaymentData, payment_response: PaymentResponse):
+    async def notify_successful_payment(self, payment_data: BasePaymentData, payment_response: PaymentResponse):
         """
         Sends a notifications to user via SMS when the payment has
         been successfully completed.
@@ -111,7 +111,7 @@ class SmsChannel(INotificationChannel):
             """
         )
 
-    async def notify_failed_payment(self, payment_data: PaymentData, payment_response: PaymentResponse):
+    async def notify_failed_payment(self, payment_data: BasePaymentData, payment_response: PaymentResponse):
         """
         Sends a notifications to user via SMS when the payment has been rejected.
         """
@@ -144,7 +144,7 @@ class EmailChannel(INotificationChannel):
         self.email_channel_template = email_channel_template
         self.resend = resend.api_key = os.getenv("RESEND_API_KEY")
         
-    async def notify_successful_payment(self, payment_data: PaymentData, payment_response: PaymentResponse):
+    async def notify_successful_payment(self, payment_data: BasePaymentData, payment_response: PaymentResponse):
         """
         Sends a notifications to the user via email when the payment has
         been successfully completed.
@@ -168,7 +168,7 @@ class EmailChannel(INotificationChannel):
             """
         )
         
-    async def notify_failed_payment(self, payment_data: PaymentData, payment_response: PaymentResponse):
+    async def notify_failed_payment(self, payment_data: BasePaymentData, payment_response: PaymentResponse):
         """
         Sends a notifications to the user via email when the payment has been rejected.
         """
