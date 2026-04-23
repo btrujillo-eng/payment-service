@@ -85,5 +85,5 @@ async def get_notification_method(payment_response: PaymentResponse, channel_ins
         method_name = "notify_rejected_payment"
     
     # getattr is used to dynamically search for a method in its object or instance using its name in str.
-    method = getattr(channel_instance, method_name, None)
+    method = getattr(channel_instance, method_name)
     return method
