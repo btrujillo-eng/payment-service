@@ -1,8 +1,8 @@
 from .user import UserModel, ContactInfoModel
 from .payment import(
-    DiscountStrategy, PaymentMethods, 
-    PaymentData, PaymentAmountModel,
-    PaymentStatus, PaymentResponse
+    DiscountStrategy, PaymentMethods, BasePaymentData, 
+    CardPaymentData, PaymentAmountModel, PaymentStatus, 
+    PaymentResponse
 )
 
 __all__ = [
@@ -10,7 +10,8 @@ __all__ = [
     "ContactInfoModel",
     "DiscountStrategy",
     "PaymentMethods",
-    "PaymentData",
+    "BasePaymentData",
+    "CardPaymentData",
     "PaymentAmountModel",
     "PaymentStatus",
     "PaymentResponse"  

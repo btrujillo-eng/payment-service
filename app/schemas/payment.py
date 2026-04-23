@@ -14,30 +14,12 @@ class DiscountStrategy(str, Enum):
 
 class PaymentMethods(str, Enum):
     CARD = 'tarjeta'
-    PAYPAL = 'paypal'
-    CRYPTO  = 'crypto'
+    CASH = 'efectivo'
 
 class PaymentStatus(str, Enum):
     SUCCEDED = "succeeded"
     FAILED = "failed"
     PENDING = "pending"
-    
-class PaymentData(BaseModel):
-    user_data : UserModel = Field(description="User's information")
-    card_number : int = Field(description="Card Number")
-    installments : int = Field(description="Number of installments in which the purchase will be paid", default=1)
-    currency : str = Field(description="Currency code", default="COP")
-    discount_type : str = Field(description="Discount type. The discount type could be 'no aplica', 'navidad', 'fijo' or 'black friday'")
-    transaction_amount : Decimal = Field(
-        # The amount could be
-        ge=0,
-        decimal_places=2,
-        description="Total purchase amount"
-    )
-    
-    class Config:
-        # It allows Pydantic to automatically convert floats or strings to Decimal.
-        json_encoders = {Decimal: str}
          
 class PaymentAmountModel(BaseModel):
     transaction_amount : Decimal = Field(
@@ -46,6 +28,20 @@ class PaymentAmountModel(BaseModel):
         decimal_places=2,
         description="Total payment amount"
     )
+     
+class BasePaymentData(BaseModel):
+    user_data : UserModel = Field(description="User's information")
+    payment_method: PaymentMethods = Field(description="Payment method. Could be 'tarjeta' o 'efectivo'")
+    currency : str = Field(description="Currency code", default="COP")
+    discount_type : str = Field(description="Discount type. The discount type could be 'no aplica', 'navidad', 'fijo' or 'black friday'")
+    transaction_amount : PaymentAmountModel = Field(description="Total purchase amount")
+    
+    class Config:
+        # It allows Pydantic to automatically convert floats or strings to Decimal.
+        json_encoders = {Decimal: str}
+        
+class CardPaymentData(BasePaymentData):
+    card_number : int = Field(description="Card Number")
 
 class PaymentResponse(BaseModel):
     currency : str = Field(description="Currency code", default="COP")
@@ -55,11 +51,7 @@ class PaymentResponse(BaseModel):
     created_at : datetime = Field(description="Transaction timestamp")
     message : str | None = Field(description="Message with payment information")
     card_number: int
-    transaction_amount : Decimal = Field(
-        ge=0,
-        decimal_places=2,
-        description="Amount charged"
-    )
+    transaction_amount : PaymentAmountModel = Field(description="Amount charged")
     
     @computed_field(description="Last four digits of the card")
     @property
