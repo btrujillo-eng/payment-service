@@ -1,6 +1,7 @@
-from schemas import DiscountStrategy, PaymentData, PaymentAmountModel, PaymentResponse
+from schemas import DiscountStrategy, BasePaymentData, PaymentAmountModel, PaymentResponse, PaymentMethods
 
 from abc import ABC, abstractmethod
+from typing import Dict
 
 class INotificationChannel(ABC):
     """
@@ -10,20 +11,20 @@ class INotificationChannel(ABC):
     notify_failed_payment
     
     Methods:
-        notify_successful_payment(payment_data: PaymentData, payment_response: PaymentResponse)
+        notify_successful_payment(payment_data: BasePaymentData, payment_response: PaymentResponse)
         
             Sends a notifications to the user when the payment has been successfully
             completed.
               
-        notify_failed_payment(payment_data: PaymentData, payment_response: PaymentResponse)
+        notify_failed_payment(payment_data: BasePaymentData, payment_response: PaymentResponse)
 
             Sends a notifications to the user when the payment has been rejected.
     """
     @abstractmethod
-    async def notify_successful_payment(self, payment_data: PaymentData, payment_response: PaymentResponse): ...
+    async def notify_successful_payment(self, payment_data: BasePaymentData, payment_response: PaymentResponse): ...
     
     @abstractmethod
-    async def notify_failed_payment(self, payment_data: PaymentData, payment_response: PaymentResponse):...
+    async def notify_failed_payment(self, payment_data: BasePaymentData, payment_response: PaymentResponse):...
     
 class INotificationChannelTemplate(ABC):
     """
@@ -33,19 +34,19 @@ class INotificationChannelTemplate(ABC):
     'failed_payment_template'.
     
     Methods:
-        successful_payment_template(payment_data: PaymentData, payment_response: PaymentResponse) -> str
+        successful_payment_template(payment_data: BasePaymentData, payment_response: PaymentResponse) -> str
 
             It's responsible for storing the template to send the payment confirmation message.
             
-        failed_payment_template(payment_data: PaymentData, payment_response: PaymentResponse) -> str
+        failed_payment_template(payment_data: BasePaymentData, payment_response: PaymentResponse) -> str
         
             It's responsible for storing the template to send the payment error message.
     """
     @abstractmethod
-    async def successful_payment_template(self, payment_data: PaymentData, payment_response: PaymentResponse) -> str: ...
+    async def successful_payment_template(self, payment_data: BasePaymentData, payment_response: PaymentResponse) -> str: ...
     
     @abstractmethod
-    async def failed_payment_template(self, payment_data: PaymentData, payment_response: PaymentResponse) -> str: ...
+    async def failed_payment_template(self, payment_data: BasePaymentData, payment_response: PaymentResponse) -> str: ...
 
 class ICardValidator(ABC):
     """
@@ -88,12 +89,15 @@ class IShoppingCart(ABC):
     Any class that implement this interface must define the method 'calculate_total'.
     
     Methods:
-        calculate_total(payment_amount: AmountModel, discount_type: DiscountStrategy | str) -> AmountModel
+        calculate_total(payment_amount: PaymentAmountModel, discount_type: DiscountStrategy | str,
+            strategy_map: Dict[DiscountStrategy, IDiscountStrategy], default_discount: IDiscountStrategy ) -> PaymentAmountModel
         
             Apply a discount type to the purchase and calculate the total price.
     """
     @abstractmethod
-    def calculate_total(self, payment_amount: PaymentAmountModel, discount_type: DiscountStrategy | str) -> PaymentAmountModel: ...
+    async def calculate_total(self, payment_amount: PaymentAmountModel, discount_type: DiscountStrategy | str,
+        strategy_map: Dict[DiscountStrategy, IDiscountStrategy], default_discount: IDiscountStrategy 
+    ) -> PaymentAmountModel: ...
     
 class IPaymentGateway(ABC):
     """
@@ -102,12 +106,12 @@ class IPaymentGateway(ABC):
     Any class that implement this interface must define the method 'process_payment'.
     
     Methods:
-        process_payment(payment_data: PaymentData) -> PaymentResponse
+        process_payment(payment_data: BasePaymentData) -> PaymentResponse
 
             It's responsible for processing a payment and returning the payment details.
     """
     @abstractmethod
-    async def process_payment(self, payment_data: PaymentData) -> PaymentResponse: ...
+    async def process_payment(self, payment_data: BasePaymentData) -> PaymentResponse: ...
 
 class IPaymentProcessor(ABC):
     """
@@ -117,9 +121,39 @@ class IPaymentProcessor(ABC):
     the method 'process'.
     
     Methods:
-        process(payment_method: str, discount_type: DiscountStrategy | str, payment_amount: AmountPurchasedModel) -> str
+        process(payment_data: PaymentData) -> PaymentResponse
         
             processes payments with a predetermined payment method.
     """
     @abstractmethod
-    async def process(self, payment_method: str, discount_type: DiscountStrategy | str, payment_amount: PaymentAmountModel) -> str: ...
+    async def process(self, payment_data: BasePaymentData) -> PaymentResponse: ...
+    
+class IPaymentMethodFactory(ABC):
+    """
+    This is a interface for factory of payment methods.
+    
+    Any class that implement this interface must defined the method 'create_payment_procesor.
+    
+    Methods:
+
+        create_payment_processor(type_payment_method: PaymentMethods | str) -> IPaymentPocessor
+        
+            Create a payment processor based on the payment method.
+    """
+    @abstractmethod
+    async def create_payment_processor(self, payment_method: PaymentMethods | str) -> IPaymentProcessor: ...
+
+class INotificationService(ABC):
+    """
+    Interface for notification service.
+    
+    Any class that implement this interface must define the 'notify_all' method.
+    
+    Methods:
+        notify_all(self, payment_response: PaymentResponse, payment_data: BasePaymentData):
+
+            Is responsible for notifying the user through all notification channels.
+        
+    """
+    @abstractmethod
+    async def notify_all(self, payment_response: PaymentResponse, payment_data: BasePaymentData): ...

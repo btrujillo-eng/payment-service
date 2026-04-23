@@ -1,4 +1,4 @@
-from .interfaces import IPaymentProcessor
+from .interfaces import IPaymentProcessor, IPaymentMethodFactory
 from .strategies import get_payment_method
 from schemas import PaymentMethods
 
@@ -7,7 +7,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-class PaymentMethodFactory:
+class PaymentMethodFactory(IPaymentMethodFactory):
     """
     This class is a factory of payment methods.
     
@@ -23,13 +23,11 @@ class PaymentMethodFactory:
     def __init__(
             self,
             card_method: Type[IPaymentProcessor],
-            paypal_method: Type[IPaymentProcessor],
-            cripto_method: Type[IPaymentProcessor]
+            cash_method: Type[IPaymentProcessor]
             ):
         self.payment_methods = {
             PaymentMethods.CARD: card_method,
-            PaymentMethods.PAYPAL: paypal_method,
-            PaymentMethods.CRYPTO: cripto_method 
+            PaymentMethods.CASH: cash_method
         }
         
     async def create_payment_processor(self, payment_method: PaymentMethods | str) -> IPaymentProcessor:
@@ -44,7 +42,7 @@ class PaymentMethodFactory:
                 f"The payment method '{payment_type}' is soport for the sistem, "
                 "but a processor has not been implementation in the factory"
             )
-            raise  RuntimeError(
+            raise RuntimeError(
                 f"The payment method '{payment_type}' is soport for the sistem, "
                 "but a processor has not been implementation in the factory"
             )
