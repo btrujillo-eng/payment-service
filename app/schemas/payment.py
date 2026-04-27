@@ -1,8 +1,8 @@
-from enum import Enum
-from pydantic import BaseModel, Field, computed_field
-from decimal import Decimal
-from uuid import UUID
+from pydantic import BaseModel, Field, computed_field, field_validator
 from datetime import datetime
+from decimal import Decimal
+from enum import Enum
+
 
 from app.schemas.user import UserModel
 
@@ -46,7 +46,7 @@ class CardPaymentData(BasePaymentData):
 class PaymentResponse(BaseModel):
     currency : str = Field(description="Currency code", default="COP")
     payment_method_id : str = Field(description="Processing network that was used for payment")
-    transaction_id : UUID = Field(description="Trasaction id")
+    transaction_id : str = Field(description="Trasaction id")
     payment_status : str = Field(description="Payment status")
     created_at : datetime = Field(description="Transaction timestamp")
     message : str | None = Field(description="Message with payment information")
@@ -57,3 +57,8 @@ class PaymentResponse(BaseModel):
     @property
     def last_digits_card(self) -> int:
         return int(str(self.card_number)[-4:])
+    
+    @field_validator("currency")
+    @classmethod
+    def uppercase_currency(cls, c: str) -> str:
+        return c.upper()

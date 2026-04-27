@@ -1,9 +1,9 @@
 from app.schemas import CardPaymentData, PaymentResponse, PaymentAmountModel
-from app.core import IPaymentGateway,to_stripe_amount, get_processing_network
+from app.core import IPaymentGateway, to_stripe_amount, get_processing_network
+from app.core.constants import STRIPE_TRIAL_TOKENS
 
 from datetime import datetime, timezone
 from stripe import StripeError
-from typing import cast
 from uuid import uuid4
 import logging
 import stripe
@@ -28,18 +28,26 @@ class StripeGateway(IPaymentGateway):
         stripe.api_key = self.api_key
         amount = await to_stripe_amount(payment_data.transaction_amount)
         source = await get_processing_network(payment_data.card_number)
-        source = cast(str, source)
+        if not source:
+            raise ValueError("The entered processing network has no support")
+        
+        # IMPORTANT: In a real production environment the codig lines between 35 and 37 must be removed.
+        # Because the token must be assigned from the front-end by Stripe.js.
+        tok_source = STRIPE_TRIAL_TOKENS.get(source)
+        if not tok_source:
+            raise RuntimeError("The processing network exists, but it does not have an assigned token")
+        
         try:
             charge = stripe.Charge.create(
                 amount=amount,
                 currency=payment_data.currency,
-                source=source,
+                source=tok_source,
                 description=f"Charge for {payment_data.user_data.first_name} {payment_data.user_data.first_surname}"
             )
             logger.info(f"Payment sucessful | Transaction id: {charge["id"]}")
             return PaymentResponse(
                 currency=charge["currency"],
-                payment_method_id=charge["source"],
+                payment_method_id=charge["source"]["brand"],
                 transaction_id=charge["id"],
                 payment_status=charge["status"],
                 created_at=datetime.fromtimestamp(charge["created"], tz=timezone.utc),
@@ -53,7 +61,7 @@ class StripeGateway(IPaymentGateway):
             return PaymentResponse(
                 currency=payment_data.currency,
                 payment_method_id="error",
-                transaction_id=uuid4(),
+                transaction_id=str(uuid4()),
                 payment_status="failed",
                 created_at=datetime.today(),
                 message="Estamos teniendo problemas para procesar el pago. Por favor intenta más tarde",

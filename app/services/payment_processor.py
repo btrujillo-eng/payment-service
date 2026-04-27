@@ -1,5 +1,5 @@
-from app.schemas import CardPaymentData, PaymentResponse
 from app.core import IPaymentProcessor, IPaymentGateway, ICardValidator
+from app.schemas import CardPaymentData, PaymentResponse
 from app.errors import CardPaymentProcessorError
 
 class CardPaymentProcessor(IPaymentProcessor):
