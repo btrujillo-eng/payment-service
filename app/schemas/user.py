@@ -7,6 +7,7 @@ class ContactInfoModel(BaseModel):
         description="User's email"
     )
     phone_number : str | None = Field(
+        default=None,
         min_length=10,
         max_length=10,
         pattern=r'^\d+$',
@@ -21,6 +22,7 @@ class UserModel(BaseModel):
         description="User's first name"
     )
     middle_name : str | None = Field(
+        default=None,
         min_length=3,
         max_length=15,
         pattern=r'^[a-zA-ZáéíóúÁÉÍÓÚñÑ]+$',
@@ -33,6 +35,7 @@ class UserModel(BaseModel):
         description="User's first surname"
     )
     middle_surname : str | None = Field(
+        default=None,
         min_length=3,
         max_length=17,
         pattern=r'^[a-zA-ZáéíóúÁÉÍÓÚñÑ]+$',
