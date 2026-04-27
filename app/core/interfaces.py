@@ -11,7 +11,7 @@ class INotificationChannel(ABC):
     notify_failed_payment
     
     Methods:
-        notify_successful_payment(payment_data: BasePaymentData, payment_response: PaymentResponse)
+        notify_successful_payment(payment_data: BasePaymentData, payment_response: PaymentResponse) -> bool
         
             Sends a notifications to the user when the payment has been successfully
             completed.
@@ -21,7 +21,7 @@ class INotificationChannel(ABC):
             Sends a notifications to the user when the payment has been rejected.
     """
     @abstractmethod
-    async def notify_successful_payment(self, payment_data: BasePaymentData, payment_response: PaymentResponse): ...
+    async def notify_successful_payment(self, payment_data: BasePaymentData, payment_response: PaymentResponse) -> bool: ...
     
     @abstractmethod
     async def notify_failed_payment(self, payment_data: BasePaymentData, payment_response: PaymentResponse):...

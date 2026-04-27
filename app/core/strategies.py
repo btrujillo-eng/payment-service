@@ -1,6 +1,6 @@
 from app.schemas import PaymentMethods, DiscountStrategy, PaymentResponse, PaymentStatus
 from app.core.interfaces import IDiscountStrategy, INotificationChannel
-from app.core.constants import PROCESSING_NETWORK_RULES, NOTIFICATION_METHOD
+from app.core.constants import PROCESSING_NETWORK_RULES, NOTIFICATION_METHOD, STRIPE_TRIAL_TOKENS
 
 from typing import Dict
 import logging
@@ -82,7 +82,7 @@ async def get_notification_method(payment_response: PaymentResponse, channel_ins
     status = await get_payment_status(payment_response.payment_status, PaymentStatus.FAILED)
     method_name = NOTIFICATION_METHOD.get(status)
     if not method_name:
-        method_name = "notify_rejected_payment"
+        method_name = 'notify_failed_payment'
     
     # getattr is used to dynamically search for a method in its object or instance using its name in str.
     method = getattr(channel_instance, method_name)
