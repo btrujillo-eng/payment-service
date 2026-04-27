@@ -27,7 +27,7 @@ class WhatsappChannel(INotificationChannel):
         )
         self.from_ = f"whatsapp:{os.getenv('TWILIO_PHONE')}"
         
-    async def notify_successful_payment( self, payment_data: BasePaymentData, payment_response: PaymentResponse):
+    async def notify_successful_payment( self, payment_data: BasePaymentData, payment_response: PaymentResponse) -> bool:
         """
         Sends a notifications to the user via WhatsApp when the payment
         has been successfully completed.
@@ -40,7 +40,8 @@ class WhatsappChannel(INotificationChannel):
                     body=await self.whatsapp_channel_template.successful_payment_template(payment_data, payment_response)
                 )
                 logger.info(f"[WhatsAppChannel] The transaction with ID {payment_response.transaction_id} was succesfully notified.")
-            except Exception:
+            except Exception as e:
+                logger.critical(f"[WhatsappChannel] is not responding | error: {e}", exc_info=True)
                 return False
             
         logger.info(
@@ -49,8 +50,9 @@ class WhatsappChannel(INotificationChannel):
              a phone number to notify them of the payment details with TRANSACTION ID {payment_response.transaction_id}.
             """
         )
+        return True
 
-    async def notify_failed_payment(self, payment_data: BasePaymentData, payment_response: PaymentResponse):
+    async def notify_failed_payment(self, payment_data: BasePaymentData, payment_response: PaymentResponse) -> bool:
         """
         Sends a notifications to user via WhatsApp when the payment has been
         rejected.
@@ -63,7 +65,8 @@ class WhatsappChannel(INotificationChannel):
                     body=await self.whatsapp_channel_template.failed_payment_template(payment_data, payment_response)
                 )
                 logger.info(f"[WhatsAppChannel] The information about TRANSACTION ID {payment_response.transaction_id} was sent succesfully.")
-            except Exception:
+            except Exception as e:
+                logger.critical(f"[WhatsappChannel | Failed] is not responding | error: {e}", exc_info=True)
                 return False
             
         logger.info(
@@ -72,6 +75,7 @@ class WhatsappChannel(INotificationChannel):
              a phone number to notify them of the payment details with TRANSACTION ID {payment_response.transaction_id}.
             """
         )
+        return True
 
 class SmsChannel(INotificationChannel):
     """
@@ -88,7 +92,7 @@ class SmsChannel(INotificationChannel):
         )
         self.from_ = os.getenv("TWILIO_PHONE")
         
-    async def notify_successful_payment(self, payment_data: BasePaymentData, payment_response: PaymentResponse):
+    async def notify_successful_payment(self, payment_data: BasePaymentData, payment_response: PaymentResponse) -> bool:
         """
         Sends a notifications to user via SMS when the payment has
         been successfully completed.
@@ -101,7 +105,8 @@ class SmsChannel(INotificationChannel):
                     body=await self.sms_channel_template.successful_payment_template(payment_data, payment_response)
                 )
                 logger.info(f"[SmsChannel] The information about TRANSACTION ID {payment_response.transaction_id} was sent successfully.")
-            except Exception:
+            except Exception as e:
+                logger.critical(f"[SmsChannel] is not responding | error: {e}", exc_info=True)
                 return False
             
         logger.info(
@@ -110,8 +115,9 @@ class SmsChannel(INotificationChannel):
              a phone number to notify them of the payment details with TRANSACTION ID {payment_response.transaction_id}.
             """
         )
+        return True
 
-    async def notify_failed_payment(self, payment_data: BasePaymentData, payment_response: PaymentResponse):
+    async def notify_failed_payment(self, payment_data: BasePaymentData, payment_response: PaymentResponse) -> bool:
         """
         Sends a notifications to user via SMS when the payment has been rejected.
         """
@@ -123,7 +129,8 @@ class SmsChannel(INotificationChannel):
                     body=await self.sms_channel_template.failed_payment_template(payment_data, payment_response)
                 )
                 logger.info(f"[SmsChannel] The information about TRANSACTION ID {payment_response.transaction_id} was sent successfully.")
-            except Exception:
+            except Exception as e:
+                logger.critical(f"[SmsChannel] is not responding | error: {e}", exc_info=True)
                 return False
 
         logger.info(
@@ -132,6 +139,7 @@ class SmsChannel(INotificationChannel):
              a phone number to notify them of the payment details with TRANSACTION ID {payment_response.transaction_id}.
             """
         )
+        return True
 
 class EmailChannel(INotificationChannel):
     """
@@ -144,7 +152,7 @@ class EmailChannel(INotificationChannel):
         self.email_channel_template = email_channel_template
         self.resend = resend.api_key = os.getenv("RESEND_API_KEY")
         
-    async def notify_successful_payment(self, payment_data: BasePaymentData, payment_response: PaymentResponse):
+    async def notify_successful_payment(self, payment_data: BasePaymentData, payment_response: PaymentResponse) -> bool:
         """
         Sends a notifications to the user via email when the payment has
         been successfully completed.
@@ -158,17 +166,20 @@ class EmailChannel(INotificationChannel):
                     "html": await self.email_channel_template.successful_payment_template(payment_data, payment_response)
                 })
                 logger.info(f"[EmailChannel] The information about TRANSACTION ID {payment_response.transaction_id} was sent successfully.")
-            except Exception:
+                return True
+            except Exception as e:
+                logger.critical(f"[EmailChannel] is not responding | error: {e}", exc_info=True)
                 return False
-            
+        
         logger.info(
             f"""
             [EmailChannel] The user could not be notified because they did not register
              a phone number to notify them of the payment details with TRANSACTION ID {payment_response.transaction_id}.
             """
         )
+        return True
         
-    async def notify_failed_payment(self, payment_data: BasePaymentData, payment_response: PaymentResponse):
+    async def notify_failed_payment(self, payment_data: BasePaymentData, payment_response: PaymentResponse) -> bool:
         """
         Sends a notifications to the user via email when the payment has been rejected.
         """
@@ -181,5 +192,8 @@ class EmailChannel(INotificationChannel):
                     "html": await self.email_channel_template.failed_payment_template(payment_data, payment_response)
                 })
                 logger.info(f"[EmailChannel] The information about TRANSACTION ID {payment_response.transaction_id} was sent succesfully.")
-            except Exception:
+            except Exception as e:
+                logger.critical(f"[EmailChannel] is not responding | error: {e}", exc_info=True)
                 return False
+        
+        return True

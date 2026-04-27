@@ -12,6 +12,7 @@ class EmailChannelTemplate(INotificationChannelTemplate):
         """
         It's responsible for store the template to send the payment confirmation message by email.
         """
+        date = payment_response.created_at.strftime("%d/%m/%Y %I:%M %p")
         return f"""
             <h2>Pago confirmado 😎</h2>
             <p>¡Hola <b>{payment_data.user_data.first_name}!</b></p>
@@ -22,11 +23,11 @@ class EmailChannelTemplate(INotificationChannelTemplate):
                 </tr>
                 <tr>
                     <td>Valor Total</td>
-                    <td>{payment_response.transaction_amount} {payment_response.currency}</td>
+                    <td>{payment_response.transaction_amount.transaction_amount} {payment_response.currency}</td>
                 </tr>
                 <tr>
                     <td>Fecha</td>
-                    <td>{payment_response.created_at}</td>
+                    <td>{date}</td>
                 </tr>
                 <tr>
                     <td>Método de Pago</td>
@@ -40,6 +41,7 @@ class EmailChannelTemplate(INotificationChannelTemplate):
         """
         It's responsible for store the template to send the payment error message by email.
         """  
+        date = payment_response.created_at.strftime("%d/%m/%Y %I:%M %p")
         return f"""
             <h2>Tu pago fue rechazado 🥲</h2>
             <p>Hola <b>{payment_data.user_data.first_name}</b></p>
@@ -50,7 +52,7 @@ class EmailChannelTemplate(INotificationChannelTemplate):
                 </tr>
                 <tr>
                     <td>Fecha</td>
-                    <td>{payment_response.created_at}</td>
+                    <td>{date}</td>
                 </tr>
                 <tr>
                     <td>Motivo</td>

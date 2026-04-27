@@ -36,12 +36,12 @@ def get_shopping_cart() -> ShoppingCart:
     return ShoppingCart()
 
 def get_notification_channels() -> List[INotificationChannel]:
-    phone_template = PhoneChannelTemplate()
+    #phone_template = PhoneChannelTemplate()
     email_template = EmailChannelTemplate()
     return [
         EmailChannel(email_template),
-        SmsChannel(phone_template),
-        WhatsappChannel(phone_template)
+        #SmsChannel(phone_template),
+        #WhatsappChannel(phone_template)
     ]
 
 def get_notification_service() -> NotificationService:
