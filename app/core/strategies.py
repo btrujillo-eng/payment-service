@@ -1,9 +1,8 @@
-from app.schemas import PaymentMethods, DiscountStrategy, PaymentResponse, PaymentStatus
-from app.core.interfaces import IDiscountStrategy, INotificationChannel
-from app.core.constants import PROCESSING_NETWORK_RULES, NOTIFICATION_METHOD, STRIPE_TRIAL_TOKENS
-
-from typing import Dict
 import logging
+
+from app.core.constants import NOTIFICATION_METHOD, PROCESSING_NETWORK_RULES
+from app.core.interfaces import IDiscountStrategy, INotificationChannel
+from app.schemas import DiscountStrategy, PaymentMethods, PaymentResponse, PaymentStatus
 
 logger = logging.getLogger(__name__)
 
@@ -24,7 +23,7 @@ async def get_payment_method(type_payment_method: PaymentMethods | str) -> Payme
    
 async def get_discount_strategy(
         discount_type: DiscountStrategy | str,
-        strategy_map: Dict[DiscountStrategy, IDiscountStrategy],
+        strategy_map: dict[DiscountStrategy, IDiscountStrategy],
         default: IDiscountStrategy | None = None
     ) -> IDiscountStrategy:
     """

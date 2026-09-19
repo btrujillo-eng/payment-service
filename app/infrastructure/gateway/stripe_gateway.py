@@ -1,13 +1,13 @@
-from app.schemas import CardPaymentData, PaymentResponse, PaymentAmountModel
-from app.core import IPaymentGateway, to_stripe_amount, get_processing_network
-from app.core.constants import STRIPE_TRIAL_TOKENS
-
-from datetime import datetime, timezone
-from stripe import StripeError
-from uuid import uuid4
 import logging
-import stripe
+from datetime import datetime, timezone
+from uuid import uuid4
 
+import stripe
+from stripe import StripeError
+
+from app.core import IPaymentGateway, get_processing_network, to_stripe_amount
+from app.core.constants import STRIPE_TRIAL_TOKENS
+from app.schemas import CardPaymentData, PaymentAmountModel, PaymentResponse
 
 logger = logging.getLogger(__name__)
 
@@ -31,7 +31,7 @@ class StripeGateway(IPaymentGateway):
         if not source:
             raise ValueError("The entered processing network has no support")
         
-        # IMPORTANT: In a real production environment the codig lines between 35 and 37 must be removed.
+        # IMPORTANT: In a real production environment the codig lines between 36 and 38 must be removed.
         # Because the token must be assigned from the front-end by Stripe.js.
         tok_source = STRIPE_TRIAL_TOKENS.get(source)
         if not tok_source:
@@ -53,7 +53,7 @@ class StripeGateway(IPaymentGateway):
                 created_at=datetime.fromtimestamp(charge["created"], tz=timezone.utc),
                 message="Pago exitoso",
                 card_number=payment_data.card_number,
-                transaction_amount=PaymentAmountModel(transaction_amount=charge["amount"] / 100)
+                transaction_amount=PaymentAmountModel(amount=charge["amount"] / 100)
             )
             
         except StripeError as e:

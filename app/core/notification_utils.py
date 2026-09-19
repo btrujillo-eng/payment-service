@@ -1,10 +1,9 @@
+import logging
+from collections import deque
+
 from app.core.interfaces import INotificationChannel
 from app.core.strategies import get_notification_method
-from app.schemas import PaymentResponse, BasePaymentData
-
-from collections import deque
-from typing import List, Type
-import logging
+from app.schemas import BasePaymentData, PaymentResponse
 
 logger = logging.getLogger(__name__)
     
@@ -12,7 +11,7 @@ async def dequeue(
         notifiers_queue: deque, 
         payment_response: PaymentResponse,
         payment_data: BasePaymentData
-    ) -> List[Type[INotificationChannel] | None]:
+    ) -> list[type[INotificationChannel] | None]:
     """
     It is responsible for emptying the notification channel queue
     """

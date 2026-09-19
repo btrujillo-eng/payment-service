@@ -1,5 +1,6 @@
-from app.schemas import BasePaymentData, PaymentResponse
 from app.core import INotificationChannelTemplate
+from app.schemas import BasePaymentData, PaymentResponse
+
 
 class EmailChannelTemplate(INotificationChannelTemplate):
     """
@@ -23,7 +24,7 @@ class EmailChannelTemplate(INotificationChannelTemplate):
                 </tr>
                 <tr>
                     <td>Valor Total</td>
-                    <td>{payment_response.transaction_amount.transaction_amount} {payment_response.currency}</td>
+                    <td>{payment_response.transaction_amount.amount} {payment_response.currency}</td>
                 </tr>
                 <tr>
                     <td>Fecha</td>

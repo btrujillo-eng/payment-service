@@ -1,12 +1,11 @@
-from app.core import IShoppingCart, IDiscountStrategy, get_discount_strategy
-from app.schemas import PaymentAmountModel, DiscountStrategy
+from app.core import IDiscountStrategy, IShoppingCart, get_discount_strategy
+from app.schemas import DiscountStrategy, PaymentAmountModel
 
-from typing import Dict
 
 class ShoppingCart(IShoppingCart):
     async def calculate_total(
         self, payment_amount: PaymentAmountModel, discount_type: DiscountStrategy | str,
-        strategy_map: Dict[DiscountStrategy, IDiscountStrategy], default_discount: IDiscountStrategy
+        strategy_map: dict[DiscountStrategy, IDiscountStrategy], default_discount: IDiscountStrategy
         ) -> PaymentAmountModel:
         """
         Apply a discount type to the purchase and calculate
@@ -14,8 +13,8 @@ class ShoppingCart(IShoppingCart):
         """
         discount_strategy = await get_discount_strategy(discount_type, strategy_map, default=default_discount)
         discount_value = await discount_strategy.apply_discount(payment_amount=payment_amount)
-        total_price = payment_amount.transaction_amount - discount_value.transaction_amount
+        total_price = payment_amount.amount - discount_value.amount
         
         return PaymentAmountModel(
-            transaction_amount=total_price
+            amount=total_price
         )

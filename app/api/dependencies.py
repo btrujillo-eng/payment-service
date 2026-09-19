@@ -1,18 +1,25 @@
-from app.services import (CardValidator, ShoppingCart, 
-    CardPaymentProcessor, NoDiscount, FixedDiscount, 
-    ChristmasDiscount, BlackFridayDiscount
-)
-from app.notifications import (NotificationService, EmailChannel, SmsChannel, 
-    WhatsappChannel, EmailChannelTemplate, PhoneChannelTemplate
-)
-from app.core import PaymentMethodFactory, IDiscountStrategy, INotificationChannel
-from app.infrastructure import StripeGateway
-from app.use_cases import ProcessPayment
-from app.schemas import DiscountStrategy
+import os
 
 from dotenv import load_dotenv
-from typing import List, Dict
-import os
+
+from app.core import IDiscountStrategy, INotificationChannel, PaymentMethodFactory
+from app.infrastructure import StripeGateway
+from app.notifications import (
+    EmailChannel,
+    EmailChannelTemplate,
+    NotificationService,
+)
+from app.schemas import DiscountStrategy
+from app.services import (
+    BlackFridayDiscount,
+    CardPaymentProcessor,
+    CardValidator,
+    ChristmasDiscount,
+    FixedDiscount,
+    NoDiscount,
+    ShoppingCart,
+)
+from app.use_cases import ProcessPayment
 
 _ = load_dotenv()
 
@@ -35,7 +42,7 @@ def get_payment_method_factory() -> PaymentMethodFactory:
 def get_shopping_cart() -> ShoppingCart:
     return ShoppingCart()
 
-def get_notification_channels() -> List[INotificationChannel]:
+def get_notification_channels() -> list[INotificationChannel]:
     #phone_template = PhoneChannelTemplate()
     email_template = EmailChannelTemplate()
     return [
@@ -50,7 +57,7 @@ def get_notification_service() -> NotificationService:
 def get_process_payment() -> ProcessPayment:
     return ProcessPayment(get_shopping_cart(), get_payment_method_factory(), get_notification_service())
 
-def get_strategy_map() -> Dict[DiscountStrategy, IDiscountStrategy]:
+def get_strategy_map() -> dict[DiscountStrategy, IDiscountStrategy]:
     return {
         DiscountStrategy.NODISCOUNT: NoDiscount(),
         DiscountStrategy.CHRISTMAS: ChristmasDiscount(),

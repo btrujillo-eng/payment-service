@@ -1,4 +1,10 @@
-from app.core import ICardValidator, get_processing_network, validate_card_length, luhn_algorit
+from app.core import (
+    ICardValidator,
+    get_processing_network,
+    luhn_algorit,
+    validate_card_length,
+)
+
 
 class CardValidator(ICardValidator):
     async def validate(self, card_number: int) -> bool:

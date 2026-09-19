@@ -1,10 +1,11 @@
-from pydantic import BaseModel, Field, computed_field, field_validator
 from datetime import datetime
 from decimal import Decimal
 from enum import Enum
 
+from pydantic import BaseModel, Field, computed_field, field_validator
 
 from app.schemas.user import UserModel
+
 
 class DiscountStrategy(str, Enum):
     NODISCOUNT = "no aplica"
@@ -22,7 +23,7 @@ class PaymentStatus(str, Enum):
     PENDING = "pending"
          
 class PaymentAmountModel(BaseModel):
-    transaction_amount : Decimal = Field(
+    amount : Decimal = Field(
         # The amount could be
         ge=0,
         decimal_places=2,

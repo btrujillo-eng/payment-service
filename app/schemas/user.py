@@ -1,7 +1,9 @@
-from pydantic import BaseModel, Field, EmailStr
+from pydantic import BaseModel, EmailStr, Field
+
 
 class ContactInfoModel(BaseModel):
     email : EmailStr | None = Field(
+        default=None,
         min_length=8,
         max_length=25,
         description="User's email"

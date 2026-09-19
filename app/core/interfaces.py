@@ -1,7 +1,13 @@
-from app.schemas import DiscountStrategy, BasePaymentData, PaymentAmountModel, PaymentResponse, PaymentMethods
-
 from abc import ABC, abstractmethod
-from typing import Dict
+
+from app.schemas import (
+    BasePaymentData,
+    DiscountStrategy,
+    PaymentAmountModel,
+    PaymentMethods,
+    PaymentResponse,
+)
+
 
 class INotificationChannel(ABC):
     """
@@ -96,7 +102,7 @@ class IShoppingCart(ABC):
     """
     @abstractmethod
     async def calculate_total(self, payment_amount: PaymentAmountModel, discount_type: DiscountStrategy | str,
-        strategy_map: Dict[DiscountStrategy, IDiscountStrategy], default_discount: IDiscountStrategy 
+        strategy_map: dict[DiscountStrategy, IDiscountStrategy], default_discount: IDiscountStrategy 
     ) -> PaymentAmountModel: ...
     
 class IPaymentGateway(ABC):

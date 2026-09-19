@@ -1,5 +1,6 @@
 from .constants import PROCESSING_NETWORK_RULES
 
+
 async def luhn_algorit(card_number: int) -> bool:
     """
     Valid if the card number is mathematically correct.

@@ -1,12 +1,13 @@
-from app.notifications.template import EmailChannelTemplate, PhoneChannelTemplate
-from app.schemas import BasePaymentData, PaymentResponse
-from app.core import INotificationChannel
+import logging
+import os
 
+import resend
 from dotenv import load_dotenv
 from twilio.rest import Client
-import logging
-import resend
-import os
+
+from app.core import INotificationChannel
+from app.notifications.template import EmailChannelTemplate, PhoneChannelTemplate
+from app.schemas import BasePaymentData, PaymentResponse
 
 _ = load_dotenv()
 

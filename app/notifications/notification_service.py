@@ -1,10 +1,9 @@
-from app.errors.error import NotificationServiceError
-from app.schemas import PaymentResponse, BasePaymentData
-from app.core import INotificationChannel, INotificationService, dequeue
-
-from collections import deque
-from typing import List
 import logging
+from collections import deque
+
+from app.core import INotificationChannel, INotificationService, dequeue
+from app.errors.error import NotificationServiceError
+from app.schemas import BasePaymentData, PaymentResponse
 
 logger = logging.getLogger(__name__)
 
@@ -15,7 +14,7 @@ class NotificationService(INotificationService):
     It's responsible for sending notification with information regarding payment details to user.
     Any class that implement this service can define the 'notify_all' method
     """
-    def __init__(self, list_channels: List[INotificationChannel]):
+    def __init__(self, list_channels: list[INotificationChannel]):
         self.list_channels = list_channels
         
     async def notify_all(self, payment_response: PaymentResponse, payment_data: BasePaymentData):
