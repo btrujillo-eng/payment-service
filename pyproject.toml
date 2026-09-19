@@ -1,0 +1,7 @@
+[tool.ruff]
+src = ["."]
+target-version = "py312"
+line-length = 88
+
+[tool.ruff.lint]
+extend-select = ["I", "RUF022"]
