@@ -2,7 +2,7 @@ from datetime import datetime
 from decimal import Decimal
 from enum import Enum
 
-from pydantic import BaseModel, Field, computed_field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, computed_field, field_validator
 
 from app.schemas.user import UserModel
 
@@ -37,9 +37,9 @@ class BasePaymentData(BaseModel):
     discount_type : str = Field(description="Discount type. The discount type could be 'no aplica', 'navidad', 'fijo' or 'black friday'")
     transaction_amount : PaymentAmountModel = Field(description="Total purchase amount")
     
-    class Config:
-        # It allows Pydantic to automatically convert floats or strings to Decimal.
-        json_encoders = {Decimal: str}
+    model_config = ConfigDict(
+        json_encoders={Decimal: str}
+    )
         
 class CardPaymentData(BasePaymentData):
     card_number : int = Field(description="Card Number")

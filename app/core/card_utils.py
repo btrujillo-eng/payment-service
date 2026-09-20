@@ -23,10 +23,7 @@ async def luhn_algorit(card_number: int) -> bool:
         card_number = card_number // 10
         position += 1
         
-    if total_sum % 10 == 0:
-        return True
-    
-    return False
+    return total_sum % 10 == 0     
 
 async def validate_card_length(processing_network: str, card_number: int) -> bool:
     """

@@ -8,15 +8,15 @@ from app.schemas import BasePaymentData, PaymentResponse
 logger = logging.getLogger(__name__)
     
 async def dequeue(
-        notifiers_queue: deque, 
+        notifiers_queue: deque[tuple[INotificationChannel, int]], 
         payment_response: PaymentResponse,
         payment_data: BasePaymentData
-    ) -> list[type[INotificationChannel] | None]:
+    ) -> list[INotificationChannel]:
     """
     It is responsible for emptying the notification channel queue
     """
     # A list is compiled of the channels where the notifiers failed
-    notifiers_failed = []
+    notifiers_failed: list[INotificationChannel] = []
         
     while notifiers_queue:
         notifier, attempts = notifiers_queue.popleft()

@@ -12,12 +12,12 @@ async def get_payment_method(type_payment_method: PaymentMethods | str) -> Payme
     
     The type payment method could be 'tarjeta', 'paypal', or 'crypto'.
     """
-    if isinstance(type_payment_method, str):
-        try:
-            type_payment_method = PaymentMethods(type_payment_method.strip().lower())
-        except ValueError:
-            logger.error(f"The payment method of type {type_payment_method} not found")
-            raise ValueError(f"The payment method of type {type_payment_method} not found")
+    
+    try:
+        type_payment_method = PaymentMethods(type_payment_method.strip().lower())
+    except ValueError:
+        logger.error(f"The payment method of type {type_payment_method} not found")
+        raise ValueError(f"The payment method of type {type_payment_method} not found")
     
     return type_payment_method
    
@@ -31,11 +31,10 @@ async def get_discount_strategy(
     
     The discount type could be 'no aplica', 'navidad', 'fijo' or 'black friday'.
     """
-    if isinstance(discount_type, str):
-        try:
-            discount_type = DiscountStrategy(discount_type.strip().lower())
-        except ValueError:
-            discount_type = DiscountStrategy.NODISCOUNT
+    try:
+        discount_type = DiscountStrategy(discount_type.strip().lower())
+    except ValueError:
+        discount_type = DiscountStrategy.NODISCOUNT
             
     default_class = default
     strategy_class = strategy_map.get(discount_type, default_class)
@@ -66,11 +65,10 @@ async def get_payment_status(payment_status: PaymentStatus | str, default: Payme
     """
     It is responsible for finding the payment status.
     """
-    if isinstance(payment_status, str):
-        try:
-            payment_status = PaymentStatus(payment_status.strip().lower())
-        except ValueError:
-            return default
+    try:
+        payment_status = PaymentStatus(payment_status.strip().lower())
+    except ValueError:
+        return default
             
     return payment_status
     

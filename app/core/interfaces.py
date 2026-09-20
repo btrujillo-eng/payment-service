@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 
 from app.schemas import (
     BasePaymentData,
+    CardPaymentData,
     DiscountStrategy,
     PaymentAmountModel,
     PaymentMethods,
@@ -30,7 +31,7 @@ class INotificationChannel(ABC):
     async def notify_successful_payment(self, payment_data: BasePaymentData, payment_response: PaymentResponse) -> bool: ...
     
     @abstractmethod
-    async def notify_failed_payment(self, payment_data: BasePaymentData, payment_response: PaymentResponse):...
+    async def notify_failed_payment(self, payment_data: BasePaymentData, payment_response: PaymentResponse)  -> bool:...
     
 class INotificationChannelTemplate(ABC):
     """
@@ -117,7 +118,7 @@ class IPaymentGateway(ABC):
             It's responsible for processing a payment and returning the payment details.
     """
     @abstractmethod
-    async def process_payment(self, payment_data: BasePaymentData) -> PaymentResponse: ...
+    async def process_payment(self, payment_data: CardPaymentData) -> PaymentResponse: ...
 
 class IPaymentProcessor(ABC):
     """
@@ -132,7 +133,7 @@ class IPaymentProcessor(ABC):
             processes payments with a predetermined payment method.
     """
     @abstractmethod
-    async def process(self, payment_data: BasePaymentData) -> PaymentResponse: ...
+    async def process(self, payment_data: CardPaymentData) -> PaymentResponse: ...
     
 class IPaymentMethodFactory(ABC):
     """

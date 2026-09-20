@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from uuid import uuid4
 
 import stripe
@@ -50,7 +50,7 @@ class StripeGateway(IPaymentGateway):
                 payment_method_id=charge["source"]["brand"],
                 transaction_id=charge["id"],
                 payment_status=charge["status"],
-                created_at=datetime.fromtimestamp(charge["created"], tz=timezone.utc),
+                created_at=datetime.fromtimestamp(charge["created"], tz=UTC),
                 message="Pago exitoso",
                 card_number=payment_data.card_number,
                 transaction_amount=PaymentAmountModel(amount=charge["amount"] / 100)
@@ -63,7 +63,7 @@ class StripeGateway(IPaymentGateway):
                 payment_method_id="error",
                 transaction_id=str(uuid4()),
                 payment_status="failed",
-                created_at=datetime.today(),
+                created_at=datetime.now(tz=UTC),
                 message="Estamos teniendo problemas para procesar el pago. Por favor intenta más tarde",
                 card_number=payment_data.card_number,
                 transaction_amount=payment_data.transaction_amount

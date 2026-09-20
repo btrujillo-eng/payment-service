@@ -31,7 +31,5 @@ class CardValidator(ICardValidator):
             return False
         
         card_valid = await luhn_algorit(card_number)
-        if not card_valid:
-            return False
         
-        return True
+        return card_valid
