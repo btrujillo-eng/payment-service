@@ -9,7 +9,7 @@ class EmailChannelTemplate(INotificationChannelTemplate):
     It's responsible for storing the templates for email notifications to the user regarding payment details. Any class that
     implements this template can define the 'successful_payment_template' and 'failed_payment_template' methods.
     """
-    async def successful_payment_template(self, payment_data: BasePaymentData, payment_response: PaymentResponse) -> str:
+    def successful_payment_template(self, payment_data: BasePaymentData, payment_response: PaymentResponse) -> str:
         """
         It's responsible for store the template to send the payment confirmation message by email.
         """
@@ -38,7 +38,7 @@ class EmailChannelTemplate(INotificationChannelTemplate):
             </table>
         """
         
-    async def failed_payment_template(self, payment_data: BasePaymentData, payment_response: PaymentResponse) -> str:
+    def failed_payment_template(self, payment_data: BasePaymentData, payment_response: PaymentResponse) -> str:
         """
         It's responsible for store the template to send the payment error message by email.
         """  
@@ -70,7 +70,7 @@ class PhoneChannelTemplate(INotificationChannelTemplate):
     It's responsible for storing the templates for SMS and WhatsApp notifications to the user regarding payment details. Any 
     class that implements this template can define the 'successful_payment_template' and 'failed_payment_template'  methods.
     """
-    async def successful_payment_template(self, payment_data: BasePaymentData, payment_response: PaymentResponse) -> str:
+    def successful_payment_template(self, payment_data: BasePaymentData, payment_response: PaymentResponse) -> str:
         return f"""
             **Pago confirmado 😎**\n\n
             ¡Hola {payment_data.user_data.first_name}!\n
@@ -85,7 +85,7 @@ class PhoneChannelTemplate(INotificationChannelTemplate):
             ¡Gracias por tu compra 🙋‍♂️!
         """
         
-    async def failed_payment_template(self, payment_data: BasePaymentData, payment_response: PaymentResponse) -> str:
+    def failed_payment_template(self, payment_data: BasePaymentData, payment_response: PaymentResponse) -> str:
         return f"""
             **Tu pago fue rechazado 🥲**\n\n
             ¡Hola {payment_data.user_data.first_name}!\n

@@ -6,7 +6,7 @@ from app.schemas import DiscountStrategy, PaymentMethods, PaymentResponse, Payme
 
 logger = logging.getLogger(__name__)
 
-async def get_payment_method(type_payment_method: PaymentMethods | str) -> PaymentMethods:
+def get_payment_method(type_payment_method: PaymentMethods | str) -> PaymentMethods:
     """
     It searches for a payment method and returns it depending on the type payment method.
     
@@ -21,7 +21,7 @@ async def get_payment_method(type_payment_method: PaymentMethods | str) -> Payme
     
     return type_payment_method
    
-async def get_discount_strategy(
+def get_discount_strategy(
         discount_type: DiscountStrategy | str,
         strategy_map: dict[DiscountStrategy, IDiscountStrategy],
         default: IDiscountStrategy | None = None
@@ -45,7 +45,7 @@ async def get_discount_strategy(
     
     return strategy_class
 
-async def get_processing_network(card_number: int) -> str | None:
+def get_processing_network(card_number: int) -> str | None:
     """
     Search for a processing network based on the card number.
     """
@@ -61,7 +61,7 @@ async def get_processing_network(card_number: int) -> str | None:
             
     return None
 
-async def get_payment_status(payment_status: PaymentStatus | str, default: PaymentStatus) -> PaymentStatus:
+def get_payment_status(payment_status: PaymentStatus | str, default: PaymentStatus) -> PaymentStatus:
     """
     It is responsible for finding the payment status.
     """
@@ -72,11 +72,11 @@ async def get_payment_status(payment_status: PaymentStatus | str, default: Payme
             
     return payment_status
     
-async def get_notification_method(payment_response: PaymentResponse, channel_instance: INotificationChannel):
+def get_notification_method(payment_response: PaymentResponse, channel_instance: INotificationChannel):
     """
     It is responsible for finding the notification method.
     """
-    status = await get_payment_status(payment_response.payment_status, PaymentStatus.FAILED)
+    status = get_payment_status(payment_response.payment_status, PaymentStatus.FAILED)
     method_name = NOTIFICATION_METHOD.get(status)
     if not method_name:
         method_name = 'notify_failed_payment'

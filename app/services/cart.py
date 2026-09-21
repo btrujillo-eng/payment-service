@@ -3,7 +3,7 @@ from app.schemas import DiscountStrategy, PaymentAmountModel
 
 
 class ShoppingCart(IShoppingCart):
-    async def calculate_total(
+    def calculate_total(
         self, payment_amount: PaymentAmountModel, discount_type: DiscountStrategy | str,
         strategy_map: dict[DiscountStrategy, IDiscountStrategy], default_discount: IDiscountStrategy
         ) -> PaymentAmountModel:
@@ -11,8 +11,8 @@ class ShoppingCart(IShoppingCart):
         Apply a discount type to the purchase and calculate
         the total price.
         """
-        discount_strategy = await get_discount_strategy(discount_type, strategy_map, default=default_discount)
-        discount_value = await discount_strategy.apply_discount(payment_amount=payment_amount)
+        discount_strategy = get_discount_strategy(discount_type, strategy_map, default=default_discount)
+        discount_value =  discount_strategy.apply_discount(payment_amount=payment_amount)
         total_price = payment_amount.amount - discount_value.amount
         
         return PaymentAmountModel(

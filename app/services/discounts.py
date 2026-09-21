@@ -5,14 +5,14 @@ from app.schemas import PaymentAmountModel
 
 
 class NoDiscount(IDiscountStrategy):
-    async def apply_discount(self, payment_amount: PaymentAmountModel) -> PaymentAmountModel:
+    def apply_discount(self, payment_amount: PaymentAmountModel) -> PaymentAmountModel:
         """
         Doesn't returns a discount value.
         """
         return PaymentAmountModel(amount=Decimal(0))
     
 class ChristmasDiscount(IDiscountStrategy):
-    async def apply_discount(self, payment_amount: PaymentAmountModel) -> PaymentAmountModel:
+    def apply_discount(self, payment_amount: PaymentAmountModel) -> PaymentAmountModel:
         """
         Returns a discount value of 30%.
         """
@@ -20,7 +20,7 @@ class ChristmasDiscount(IDiscountStrategy):
         return PaymentAmountModel(amount=Decimal(discount_value))
     
 class FixedDiscount(IDiscountStrategy):
-    async def apply_discount(self, payment_amount: PaymentAmountModel) -> PaymentAmountModel:
+    def apply_discount(self, payment_amount: PaymentAmountModel) -> PaymentAmountModel:
         """
         Returns a fixed discount value of 5000 if the purchase amount
         is greater than 15000. If purchase amount is less than 15000,
@@ -31,7 +31,7 @@ class FixedDiscount(IDiscountStrategy):
         return PaymentAmountModel(amount=Decimal(0))
     
 class BlackFridayDiscount(IDiscountStrategy):
-    async def apply_discount(self, payment_amount: PaymentAmountModel) -> PaymentAmountModel:
+    def apply_discount(self, payment_amount: PaymentAmountModel) -> PaymentAmountModel:
         """
         Returns a discount value of 20%.
         """

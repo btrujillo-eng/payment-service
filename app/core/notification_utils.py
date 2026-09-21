@@ -7,7 +7,7 @@ from app.schemas import BasePaymentData, PaymentResponse
 
 logger = logging.getLogger(__name__)
     
-async def dequeue(
+def dequeue(
         notifiers_queue: deque[tuple[INotificationChannel, int]], 
         payment_response: PaymentResponse,
         payment_data: BasePaymentData
@@ -20,13 +20,13 @@ async def dequeue(
         
     while notifiers_queue:
         notifier, attempts = notifiers_queue.popleft()
-        notification_method = await get_notification_method(payment_response, notifier)
+        notification_method = get_notification_method(payment_response, notifier)
             
         if not notification_method:
             logger.critical("No notification method was found for the notification channels")
             raise RuntimeError("No notification method was found for the notification channels")
             
-        if await notification_method(payment_data, payment_response):
+        if notification_method(payment_data, payment_response):
             logger.info(f"Notification success with {notifier}")
         else:
             new_attempts = attempts + 1

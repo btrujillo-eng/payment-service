@@ -21,17 +21,17 @@ class StripeGateway(IPaymentGateway):
     def __init__(self, api_key: str):
         self.api_key = api_key
         
-    async def process_payment(self, payment_data: CardPaymentData) -> PaymentResponse:
+    def process_payment(self, payment_data: CardPaymentData) -> PaymentResponse:
         """
         It's responsible for processing a payment and returning the payment details.
         """
         stripe.api_key = self.api_key
-        amount = await to_stripe_amount(payment_data.transaction_amount)
-        source = await get_processing_network(payment_data.card_number)
+        amount = to_stripe_amount(payment_data.transaction_amount)
+        source = get_processing_network(payment_data.card_number)
         if not source:
             raise ValueError("The entered processing network has no support")
         
-        # IMPORTANT: In a real production environment the codig lines between 36 and 38 must be removed.
+        # NOTE: In a real production environment the codig lines between 36 and 38 must be removed.
         # Because the token must be assigned from the front-end by Stripe.js.
         tok_source = STRIPE_TRIAL_TOKENS.get(source)
         if not tok_source:

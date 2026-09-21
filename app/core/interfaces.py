@@ -28,10 +28,10 @@ class INotificationChannel(ABC):
             Sends a notifications to the user when the payment has been rejected.
     """
     @abstractmethod
-    async def notify_successful_payment(self, payment_data: BasePaymentData, payment_response: PaymentResponse) -> bool: ...
+    def notify_successful_payment(self, payment_data: BasePaymentData, payment_response: PaymentResponse) -> bool: ...
     
     @abstractmethod
-    async def notify_failed_payment(self, payment_data: BasePaymentData, payment_response: PaymentResponse)  -> bool:...
+    def notify_failed_payment(self, payment_data: BasePaymentData, payment_response: PaymentResponse)  -> bool:...
     
 class INotificationChannelTemplate(ABC):
     """
@@ -50,10 +50,10 @@ class INotificationChannelTemplate(ABC):
             It's responsible for storing the template to send the payment error message.
     """
     @abstractmethod
-    async def successful_payment_template(self, payment_data: BasePaymentData, payment_response: PaymentResponse) -> str: ...
+    def successful_payment_template(self, payment_data: BasePaymentData, payment_response: PaymentResponse) -> str: ...
     
     @abstractmethod
-    async def failed_payment_template(self, payment_data: BasePaymentData, payment_response: PaymentResponse) -> str: ...
+    def failed_payment_template(self, payment_data: BasePaymentData, payment_response: PaymentResponse) -> str: ...
 
 class ICardValidator(ABC):
     """
@@ -68,7 +68,7 @@ class ICardValidator(ABC):
             Valid if a card is valid based on your number.
     """
     @abstractmethod
-    async def validate(self, card_number: int) -> bool:...
+    def validate(self, card_number: int) -> bool:...
     
 class IDiscountStrategy(ABC):
     """
@@ -87,7 +87,7 @@ class IDiscountStrategy(ABC):
             Returns the discount value.
     """
     @abstractmethod
-    async def apply_discount(self, payment_amount: PaymentAmountModel) -> PaymentAmountModel: ...
+    def apply_discount(self, payment_amount: PaymentAmountModel) -> PaymentAmountModel: ...
           
 class IShoppingCart(ABC):
     """
@@ -102,7 +102,7 @@ class IShoppingCart(ABC):
             Apply a discount type to the purchase and calculate the total price.
     """
     @abstractmethod
-    async def calculate_total(self, payment_amount: PaymentAmountModel, discount_type: DiscountStrategy | str,
+    def calculate_total(self, payment_amount: PaymentAmountModel, discount_type: DiscountStrategy | str,
         strategy_map: dict[DiscountStrategy, IDiscountStrategy], default_discount: IDiscountStrategy 
     ) -> PaymentAmountModel: ...
     
@@ -118,7 +118,7 @@ class IPaymentGateway(ABC):
             It's responsible for processing a payment and returning the payment details.
     """
     @abstractmethod
-    async def process_payment(self, payment_data: CardPaymentData) -> PaymentResponse: ...
+    def process_payment(self, payment_data: CardPaymentData) -> PaymentResponse: ...
 
 class IPaymentProcessor(ABC):
     """
@@ -133,7 +133,7 @@ class IPaymentProcessor(ABC):
             processes payments with a predetermined payment method.
     """
     @abstractmethod
-    async def process(self, payment_data: CardPaymentData) -> PaymentResponse: ...
+    def process(self, payment_data: CardPaymentData) -> PaymentResponse: ...
     
 class IPaymentMethodFactory(ABC):
     """
@@ -148,7 +148,7 @@ class IPaymentMethodFactory(ABC):
             Create a payment processor based on the payment method.
     """
     @abstractmethod
-    async def create_payment_processor(self, payment_method: PaymentMethods | str) -> IPaymentProcessor: ...
+    def create_payment_processor(self, payment_method: PaymentMethods | str) -> IPaymentProcessor: ...
 
 class INotificationService(ABC):
     """
@@ -163,4 +163,4 @@ class INotificationService(ABC):
         
     """
     @abstractmethod
-    async def notify_all(self, payment_response: PaymentResponse, payment_data: BasePaymentData): ...
+    def notify_all(self, payment_response: PaymentResponse, payment_data: BasePaymentData): ...

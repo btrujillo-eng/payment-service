@@ -1,7 +1,7 @@
 from .constants import PROCESSING_NETWORK_RULES
 
 
-async def luhn_algorit(card_number: int) -> bool:
+def luhn_algorit(card_number: int) -> bool:
     """
     Valid if the card number is mathematically correct.
     """
@@ -25,7 +25,7 @@ async def luhn_algorit(card_number: int) -> bool:
         
     return total_sum % 10 == 0     
 
-async def validate_card_length(processing_network: str, card_number: int) -> bool:
+def validate_card_length(processing_network: str, card_number: int) -> bool:
     """
     Valid if the card number length is valid, depending
     on your processing network.

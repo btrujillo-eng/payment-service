@@ -7,7 +7,7 @@ from app.core import (
 
 
 class CardValidator(ICardValidator):
-    async def validate(self, card_number: int) -> bool:
+    def validate(self, card_number: int) -> bool:
         """
         Valid if a card is valid based on his number.
         
@@ -22,14 +22,14 @@ class CardValidator(ICardValidator):
         
         if the card is valid returns True, otherwise returns False.
         """
-        processing_network = await get_processing_network(card_number)
+        processing_network = get_processing_network(card_number)
         if not processing_network:
             return False
         
-        length_valid = await validate_card_length(processing_network, card_number)
+        length_valid = validate_card_length(processing_network, card_number)
         if not length_valid:
             return False
         
-        card_valid = await luhn_algorit(card_number)
+        card_valid = luhn_algorit(card_number)
         
         return card_valid

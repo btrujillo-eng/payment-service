@@ -8,10 +8,10 @@ class CardPaymentProcessor(IPaymentProcessor):
         self.card_validator = card_validator
         self.stripe_gateway = stripe_gateway
     
-    async def process(self, payment_data: CardPaymentData) -> PaymentResponse:
-        valid_card = await self.card_validator.validate(payment_data.card_number)
+    def process(self, payment_data: CardPaymentData) -> PaymentResponse:
+        valid_card = self.card_validator.validate(payment_data.card_number)
         if not valid_card:
             raise CardPaymentProcessorError("The card is not valide")
-        payment_response = await self.stripe_gateway.process_payment(payment_data)
+        payment_response = self.stripe_gateway.process_payment(payment_data)
         
         return payment_response

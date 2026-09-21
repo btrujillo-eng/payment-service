@@ -29,11 +29,11 @@ class PaymentMethodFactory(IPaymentMethodFactory):
             PaymentMethods.CASH: cash_method
         }
         
-    async def create_payment_processor(self, payment_method: PaymentMethods | str) -> IPaymentProcessor:
+    def create_payment_processor(self, payment_method: PaymentMethods | str) -> IPaymentProcessor:
         """
             Create a payment processor based on the payment method.
             """
-        payment_type = await get_payment_method(payment_method)
+        payment_type = get_payment_method(payment_method)
         processor_class = self.payment_methods.get(payment_type)
             
         if not processor_class:
