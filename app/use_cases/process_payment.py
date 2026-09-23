@@ -7,7 +7,7 @@ from app.core import (
 from app.schemas import CardPaymentData, DiscountStrategy, PaymentResponse
 
 
-class ProcessPayment:
+class ProcessPaymentUseCase:
     def __init__(
             self,
             shopping_cart: IShoppingCart,

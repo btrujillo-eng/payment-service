@@ -19,7 +19,7 @@ from app.services import (
     NoDiscount,
     ShoppingCart,
 )
-from app.use_cases import ProcessPayment
+from app.use_cases import ProcessPaymentUseCase
 
 _ = load_dotenv()
 
@@ -54,8 +54,8 @@ def get_notification_channels() -> list[INotificationChannel]:
 def get_notification_service() -> NotificationService:
     return NotificationService(get_notification_channels())
 
-def get_process_payment() -> ProcessPayment:
-    return ProcessPayment(get_shopping_cart(), get_payment_method_factory(), get_notification_service())
+def get_process_payment() -> ProcessPaymentUseCase:
+    return ProcessPaymentUseCase(get_shopping_cart(), get_payment_method_factory(), get_notification_service())
 
 def get_strategy_map() -> dict[DiscountStrategy, IDiscountStrategy]:
     return {

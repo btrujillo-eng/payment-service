@@ -1,5 +1,5 @@
-from app.use_cases.process_payment import ProcessPayment
+from app.use_cases.process_payment import ProcessPaymentUseCase
 
 __all__ = [
-    "ProcessPayment"
+    "ProcessPaymentUseCase"
 ]
