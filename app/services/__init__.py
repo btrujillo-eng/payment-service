@@ -5,13 +5,11 @@ from app.services.discounts import (
     FixedDiscount,
     NoDiscount,
 )
-from app.services.payment_processor import CardPaymentProcessor
-from app.services.validators import CardValidator
+from app.services.card_payment import CardPaymentProcessor
 
 __all__ = [
     "BlackFridayDiscount",
     "CardPaymentProcessor",
-    "CardValidator",
     "ChristmasDiscount",
     "FixedDiscount",
     "NoDiscount",

@@ -20,7 +20,7 @@ def dequeue(
         
     while notifiers_queue:
         notifier, attempts = notifiers_queue.popleft()
-        notification_method = get_notification_method(payment_response, notifier)
+        notification_method = get_notification_method(payment_response.payment_status, notifier)
             
         if not notification_method:
             logger.critical("No notification method was found for the notification channels")

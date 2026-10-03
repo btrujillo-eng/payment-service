@@ -2,18 +2,21 @@ import os
 
 from dotenv import load_dotenv
 
-from app.core import IDiscountStrategy, INotificationChannel, PaymentMethodFactory
+from app.core import (
+    DiscountStrategy,
+    IDiscountStrategy,
+    INotificationChannel,
+    PaymentMethodFactory,
+)
 from app.infrastructure import StripeGateway
 from app.notifications import (
     EmailChannel,
     EmailChannelTemplate,
     NotificationService,
 )
-from app.schemas import DiscountStrategy
 from app.services import (
     BlackFridayDiscount,
     CardPaymentProcessor,
-    CardValidator,
     ChristmasDiscount,
     FixedDiscount,
     NoDiscount,
@@ -29,11 +32,8 @@ def get_stripe_gateway() -> StripeGateway:
         raise ValueError("API key not found")
     return StripeGateway(api_key)
 
-def get_card_validator() -> CardValidator:
-    return CardValidator()
-
 def get_card_processor() -> CardPaymentProcessor:
-    return CardPaymentProcessor(get_card_validator(), get_stripe_gateway())
+    return CardPaymentProcessor(get_stripe_gateway())
 
 def get_payment_method_factory() -> PaymentMethodFactory:
      # TODO: implement CashPaymentProcessor

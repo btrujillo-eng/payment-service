@@ -1,8 +1,8 @@
 import logging
+from typing import Any
 
+from app.core.enums import PaymentMethods
 from app.core.interfaces import IPaymentMethodFactory, IPaymentProcessor
-from app.core.strategies import get_payment_method
-from app.schemas import PaymentMethods
 
 logger = logging.getLogger(__name__)
 
@@ -24,25 +24,24 @@ class PaymentMethodFactory(IPaymentMethodFactory):
             card_method: IPaymentProcessor,
             cash_method: IPaymentProcessor
             ):
-        self.payment_methods = {
+        self.payment_methods: dict[Any, IPaymentProcessor] = {
             PaymentMethods.CARD: card_method,
             PaymentMethods.CASH: cash_method
         }
         
-    def create_payment_processor(self, payment_method: PaymentMethods | str) -> IPaymentProcessor:
+    def create_payment_processor(self, payment_method: PaymentMethods) -> IPaymentProcessor:
         """
             Create a payment processor based on the payment method.
             """
-        payment_type = get_payment_method(payment_method)
-        processor_class = self.payment_methods.get(payment_type)
+        processor_class = self.payment_methods.get(payment_method)
             
         if not processor_class:
             logger.warning(
-                f"The payment method '{payment_type}' is soport for the sistem, "
-                "but a processor has not been implementation in the factory"
+                f"The payment method '{payment_method}' is supported by the system, "
+                "but a processor has not been implemented in the factory"
             )
             raise RuntimeError(
-                f"The payment method '{payment_type}' is soport for the sistem, "
-                "but a processor has not been implementation in the factory"
+                f"The payment method '{payment_method}' is supported by the system, "
+                "but a processor has not been implemented in the factory"
             )
         return processor_class

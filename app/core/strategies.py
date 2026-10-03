@@ -1,25 +1,10 @@
 import logging
 
-from app.core.constants import NOTIFICATION_METHOD, PROCESSING_NETWORK_RULES
+from app.core.constants import NOTIFICATION_METHOD
+from app.core.enums import DiscountStrategy, PaymentStatus
 from app.core.interfaces import IDiscountStrategy, INotificationChannel
-from app.schemas import DiscountStrategy, PaymentMethods, PaymentResponse, PaymentStatus
 
 logger = logging.getLogger(__name__)
-
-def get_payment_method(type_payment_method: PaymentMethods | str) -> PaymentMethods:
-    """
-    It searches for a payment method and returns it depending on the type payment method.
-    
-    The type payment method could be 'tarjeta', 'paypal', or 'crypto'.
-    """
-    
-    try:
-        type_payment_method = PaymentMethods(type_payment_method.strip().lower())
-    except ValueError:
-        logger.error(f"The payment method of type {type_payment_method} not found")
-        raise ValueError(f"The payment method of type {type_payment_method} not found")
-    
-    return type_payment_method
    
 def get_discount_strategy(
         discount_type: DiscountStrategy | str,
@@ -45,22 +30,6 @@ def get_discount_strategy(
     
     return strategy_class
 
-def get_processing_network(card_number: int) -> str | None:
-    """
-    Search for a processing network based on the card number.
-    """
-    s_card = str(card_number)
-    iin_code = int(s_card[:4])
-    for network in PROCESSING_NETWORK_RULES:
-        if s_card.startswith(network['prefixes']):
-            return network['name']
-
-        for start, end in network['ranges']:
-            if start <= iin_code <= end:
-                return network['name']
-            
-    return None
-
 def get_payment_status(payment_status: PaymentStatus | str, default: PaymentStatus) -> PaymentStatus:
     """
     It is responsible for finding the payment status.
@@ -72,11 +41,11 @@ def get_payment_status(payment_status: PaymentStatus | str, default: PaymentStat
             
     return payment_status
     
-def get_notification_method(payment_response: PaymentResponse, channel_instance: INotificationChannel):
+def get_notification_method(payment_status: str, channel_instance: INotificationChannel):
     """
     It is responsible for finding the notification method.
     """
-    status = get_payment_status(payment_response.payment_status, PaymentStatus.FAILED)
+    status = get_payment_status(payment_status, PaymentStatus.FAILED)
     method_name = NOTIFICATION_METHOD.get(status)
     if not method_name:
         method_name = 'notify_failed_payment'

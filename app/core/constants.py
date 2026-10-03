@@ -1,12 +1,12 @@
 from typing import Any
 
-from app.schemas import PaymentStatus
+from app.core.enums import PaymentStatus
 
 PROCESSING_NETWORK_RULES: list[dict[str, Any]] = [
-    {"name": "Visa", "prefixes": ("4",), "ranges": [], "lengths": [13, 16]},
-    {"name": "American Express", "prefixes": ('34', '37'), "ranges": [], "lengths": [15]},
-    {"name": "Mastercard", "prefixes": ("51", "52", "53", "54", "55",), "ranges": [(2221, 2720)], "lengths": [16]},
-    {"name": "Discover", "prefixes": (6011,), "ranges": [(644, 650)], "lengths": [16]}
+    {"name": "Visa", "prefixes": ("4",), "ranges": [], "lengths": [13, 16], "cvv_length": 3},
+    {"name": "American Express", "prefixes": ('34', '37'), "ranges": [], "lengths": [15], "cvv_length": 4},
+    {"name": "Mastercard", "prefixes": ("51", "52", "53", "54", "55",), "ranges": [(2221, 2720)], "lengths": [16], "cvv_length": 3},
+    {"name": "Discover", "prefixes": (6011,), "ranges": [(644, 650)], "lengths": [16], "cvv_length": 3}
 ]
 
 NOTIFICATION_METHOD: dict[PaymentStatus, str] = {

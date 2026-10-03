@@ -1,14 +1,16 @@
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
+from decimal import Decimal
+from typing import TYPE_CHECKING
 
-from app.schemas import (
-    BasePaymentData,
-    CardPaymentData,
-    DiscountStrategy,
-    PaymentAmountModel,
-    PaymentMethods,
-    PaymentResponse,
-)
+from app.core.enums import DiscountStrategy, PaymentMethods
 
+if TYPE_CHECKING:
+    from app.schemas import (
+        BasePaymentData,
+        PaymentResponse,
+    )
 
 class INotificationChannel(ABC):
     """
@@ -54,21 +56,6 @@ class INotificationChannelTemplate(ABC):
     
     @abstractmethod
     def failed_payment_template(self, payment_data: BasePaymentData, payment_response: PaymentResponse) -> str: ...
-
-class ICardValidator(ABC):
-    """
-    Interface for validating cards.
-    
-    Any class that implement this interface must define the
-    method 'validate'.
-    
-    Methods:
-        validate(card_number: int) -> bool
-        
-            Valid if a card is valid based on your number.
-    """
-    @abstractmethod
-    def validate(self, card_number: int) -> bool:...
     
 class IDiscountStrategy(ABC):
     """
@@ -87,7 +74,7 @@ class IDiscountStrategy(ABC):
             Returns the discount value.
     """
     @abstractmethod
-    def apply_discount(self, payment_amount: PaymentAmountModel) -> PaymentAmountModel: ...
+    def apply_discount(self, payment_amount: Decimal) -> Decimal: ...
           
 class IShoppingCart(ABC):
     """
@@ -102,9 +89,9 @@ class IShoppingCart(ABC):
             Apply a discount type to the purchase and calculate the total price.
     """
     @abstractmethod
-    def calculate_total(self, payment_amount: PaymentAmountModel, discount_type: DiscountStrategy | str,
+    def calculate_total(self, payment_amount: Decimal, discount_type: DiscountStrategy | str,
         strategy_map: dict[DiscountStrategy, IDiscountStrategy], default_discount: IDiscountStrategy 
-    ) -> PaymentAmountModel: ...
+    ) -> Decimal: ...
     
 class IPaymentGateway(ABC):
     """
@@ -118,7 +105,7 @@ class IPaymentGateway(ABC):
             It's responsible for processing a payment and returning the payment details.
     """
     @abstractmethod
-    def process_payment(self, payment_data: CardPaymentData) -> PaymentResponse: ...
+    def process_payment(self, payment_data: BasePaymentData) -> PaymentResponse: ...
 
 class IPaymentProcessor(ABC):
     """
@@ -133,7 +120,7 @@ class IPaymentProcessor(ABC):
             processes payments with a predetermined payment method.
     """
     @abstractmethod
-    def process(self, payment_data: CardPaymentData) -> PaymentResponse: ...
+    def process(self, payment_data: BasePaymentData) -> PaymentResponse: ...
     
 class IPaymentMethodFactory(ABC):
     """
@@ -148,7 +135,7 @@ class IPaymentMethodFactory(ABC):
             Create a payment processor based on the payment method.
     """
     @abstractmethod
-    def create_payment_processor(self, payment_method: PaymentMethods | str) -> IPaymentProcessor: ...
+    def create_payment_processor(self, payment_method: PaymentMethods) -> IPaymentProcessor: ...
 
 class INotificationService(ABC):
     """
