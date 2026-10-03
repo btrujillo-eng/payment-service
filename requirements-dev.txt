@@ -1,0 +1,21 @@
+-r requirements-prod.txt
+coverage==7.16.2
+fastapi-cli==0.0.24
+fastapi-cloud-cli==0.16.1
+iniconfig==2.3.0
+markdown-it-py==4.0.0
+mdurl==0.1.2
+nodeenv==1.10.0
+packaging==26.3
+pluggy==1.6.0
+propcache==0.4.1
+Pygments==2.20.0
+pyright==1.1.414
+pytest==9.1.1
+pytest-mock==3.16.0
+rich==15.0.0
+rich-toolkit==0.19.7
+rignore==0.7.6
+shellingham==1.5.4
+typer==0.24.1
+watchfiles==1.1.1
