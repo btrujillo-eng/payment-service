@@ -17,3 +17,6 @@ extend-immutable-calls = [
     "fastapi.File",
     "fastapi.Form"
 ]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
